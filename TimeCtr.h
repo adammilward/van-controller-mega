@@ -6,13 +6,14 @@
  */
 
 #include "Arduino.h"
-#include "Light.h"
+#include "Utilities/Light.h"
 #include "DS3231.h"
+#include "Utilities/Alarm.h"
 
 #ifndef TIMECTR_H_
 #define TIMECTR_H_
 
-class TimeCtr {
+class TimeCtr{
 public:
 	TimeCtr();
 
@@ -23,7 +24,8 @@ public:
 	bool actionSerial(char **, byte);
 	void timer(unsigned long);
 
-	static DS3231 *time;
+	static DS3231 *clock;
+	Utilities::Alarm alarm;
 private:
 
 	byte reportDelay = 0;
@@ -39,6 +41,8 @@ private:
 	void outTime();
 	void outDate();
 	void outTemp();
+
+	bool setAlarm();
 
 };
 

@@ -8,7 +8,8 @@
 #include "Arduino.h"
 #include "Utilities/Light.h"
 #include "DS3231.h"
-#include "Utilities/Alarm.h"
+#include "Events/AbcEvent.h"
+
 
 #ifndef TIMECTR_H_
 #define TIMECTR_H_
@@ -22,14 +23,25 @@ public:
 	static Light *blue;
 
 	bool actionSerial(char **, byte);
+	bool help();
 	void timer(unsigned long);
 
 	static DS3231 *clock;
-	Utilities::Alarm alarm;
+
+	static void heaterOn(int);
+	static void heaterOff();
+	static void waterHeaterOn(int);
+	static void waterHeaterOff();
+	static void lightsFadeOn(int);
+	static void lightsFadeOff(int);
+
 private:
 
 	byte reportDelay = 0;
 	unsigned long waitMillisReport = 0;
+
+	AbcEvent heaterEvent;
+
 	void report();
 	void setReportDelay(byte);
 
@@ -43,7 +55,6 @@ private:
 	void outTemp();
 
 	bool setAlarm();
-
 };
 
 #endif /* TIMECTR_H_ */

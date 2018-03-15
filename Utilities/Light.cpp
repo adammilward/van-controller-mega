@@ -170,7 +170,6 @@ void Light::toHalf() {
     base = 0.5;
     calcPow();
     analogWrite(pin, (power));
-    // randomly set the rate and directions
 }
 void Light::flashOff(){
     digitalWrite(pin, LOW);

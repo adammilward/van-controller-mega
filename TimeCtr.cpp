@@ -15,7 +15,7 @@
 #define DEBUG
 
 TimeCtr::TimeCtr() {
-
+	AbcEvent heaterEvent = new HeaterOn::HeaterOn(clock->getTime, false, 600);
 }
 
 bool TimeCtr::actionSerial(char **wordPtrs, byte wordCount) {
@@ -23,15 +23,25 @@ bool TimeCtr::actionSerial(char **wordPtrs, byte wordCount) {
 	Gbl::freeRam();
 
 	if (strcasecmp(wordPtrs[0], "report") == 0) {
-        Gbl::strPtr->println(F("report"));
         if (wordCount == 2 && Controller::isNum(wordPtrs[1])) {
 			setReportDelay(atoi(wordPtrs[1]));
 		}
 		report();
-		return true;
     } else if (strcasecmp(wordPtrs[0], "set") == 0) {
-		if (set(&wordPtrs[1], --wordCount)) return true;
+		if (!set(&wordPtrs[1], --wordCount)) return help();
+    } else if (strcasecmp(wordPtrs[0], "time") == 0) {
+		outTime();
+    } else if (strcasecmp(wordPtrs[0], "temp") == 0) {
+		outTemp();
+    } else if (strcasecmp(wordPtrs[0], "date") == 0) {
+		outDate();
+    } else {
+    	return help();
     }
+	return true;
+}
+
+bool TimeCtr::help() {
 	Gbl::strPtr->println(F("Time Controller commands are:"));
 	Gbl::strPtr->println(F("report, time, date, alarm"));
 	Gbl::strPtr->println(F("set time hh mm ss"));
@@ -73,26 +83,11 @@ bool TimeCtr::set(char **wordPtrs, byte wordCount) {
 		if (setDate(&wordPtrs[1], wordCount-1)) return true;
 	} else if (strcasecmp(wordPtrs[0], "time") == 0) {
 		if (setTime(&wordPtrs[1], wordCount-1)) return true;
-	} else if (strcasecmp(wordPtrs[0], "alarm") == 0) {
-		if (setAlarm()) return true;
 	}
 
     Gbl::strPtr->println(F("Set Failed, command format is: "));
     Gbl::strPtr->println(F("day n | date dd mm yyyy | time hh mm ss"));
     return false;
-}
-
-bool TimeCtr::setAlarm() {
-#ifdef DEBUG
-	Gbl::strPtr->println(F("TimeCtr::setAlarm"));
-	Gbl::freeRam();
-
-#endif
-	Gbl::strPtr->print(F("Alarm Time: "));
-	Gbl::strPtr->println(clock->getTimeStr(alarm));
-	Gbl::strPtr->println(F("\r to keep, [+] h m s to set"));
-	//char* response = masterCtr::waitCommand();
-	return true;
 }
 
 bool TimeCtr::setDay(char **wordPtrs, byte wordCount) {
@@ -190,4 +185,28 @@ void TimeCtr::outTemp() {
     Gbl::strPtr->print(F("Temp: "));
    	Gbl::strPtr->print(clock->getTemp());
    	Gbl::strPtr->println(F(" C"));
+}
+
+void TimeCtr::heaterOn(int delay = 60 * 60) {
+
+}
+
+void TimeCtr::heaterOff() {
+
+}
+
+void TimeCtr::waterHeaterOn(int delay = 60 * 60) {
+
+}
+
+void TimeCtr::waterHeaterOff() {
+
+}
+
+void TimeCtr::lightsFadeOn(int delay = (60 * 15)) {
+
+}
+
+void TimeCtr::lightsFadeOff(int delay = 30) {
+
 }

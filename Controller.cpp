@@ -123,13 +123,13 @@ bool Controller::checkForMode()  {
     Gbl::strPtr->println(F("checkForMode"));
 	Gbl::freeRam();
 #endif
-	if (strcasecmp(wordPtrs[0], "lights") == 0) {
+	if (strcasecmp(wordPtrs[0], "lights") == 0 && mode != LIGHTS) {
         mode = LIGHTS;
-    } else if (strcasecmp(wordPtrs[0], "status") == 0) {
+    } else if (strcasecmp(wordPtrs[0], "status") == 0 && mode != STATUS) {
         mode = STATUS;
-    } else if (strcasecmp(wordPtrs[0], "com") == 0) {
+    } else if (strcasecmp(wordPtrs[0], "com") == 0 && mode != COM) {
         mode = COM;
-    } else if (strcasecmp(wordPtrs[0], "time") == 0) {
+    } else if (strcasecmp(wordPtrs[0], "time") == 0 && mode != TIME) {
         mode = TIME;
     } else {
     	return false;

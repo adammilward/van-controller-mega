@@ -27,12 +27,14 @@ public:
     static const byte GREEN_PIN = 3;  //  |  /  \  |
     static const byte BLUE_PIN = 2;   //  | |    | |
     static const byte IREC_PIN = 5;  //  out  0  v+
+    static const byte HEATER = 23;
 #endif
 #ifdef UNO		                      //   ________
     static const byte RED_PIN = 9;    //  |   __   |
     static const byte GREEN_PIN = 10;  //  |  /  \  |
     static const byte BLUE_PIN = 11;   //  | |    | |
     static const byte IREC_PIN = 5;  //  out  0  v+
+    static const byte HEATER = 13;
 #endif
 
 

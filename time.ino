@@ -9,10 +9,9 @@
 Controller masterCtr;      // handles the remotes
 Stream *Gbl::strPtr = &Serial;
 
-
-//Light Red(Gbl::RED_PIN, 0);
-//Light Green(Gbl::GREEN_PIN, 1);
-//Light Blue(Gbl::BLUE_PIN, 2);
+Light Red(Gbl::RED_PIN, 0);
+Light Green(Gbl::GREEN_PIN, 1);
+Light Blue(Gbl::BLUE_PIN, 2);
 
 //#define MEGA
 //#define BTUNO
@@ -27,9 +26,9 @@ Stream *Gbl::strPtr = &Serial;
 #include "TimeCtr.h"
 DS3231  Clock(SDA, SCL);
 DS3231 *TimeCtr::clock = &Clock;
-//Light *TimeCtr::red = &Red;
-//Light *TimeCtr::green = &Green;
-//Light *TimeCtr::blue = &Blue;
+Light *TimeCtr::red = &Red;
+Light *TimeCtr::green = &Green;
+Light *TimeCtr::blue = &Blue;
 #endif
 
 void setup()

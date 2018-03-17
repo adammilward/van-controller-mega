@@ -12,16 +12,16 @@
 //#define IR
 //#include "LightCtr.h"
 #define TME
-#include "TimeCtr.h"
 
 #include "Arduino.h"
 #include "Controller.h"
 #include "Gbl.h"
+#include "TimeCtr.h"
 
 
 Controller::Controller() {
-    prevDataAr[0] = '\0';
     // stop it going wappy first time something is sent
+    prevDataAr[0] = '\0';
 #ifdef STAT
    StatusCtr statusCtr;
 #endif
@@ -41,7 +41,7 @@ void Controller::timer(unsigned long millis) {
     lightCtr.timer(millis);
 #endif
 #ifdef TME
-    timeCtr.timer(millis);
+    timeCtr.actionTimer(millis);
 #endif
 }
 
@@ -59,7 +59,7 @@ void Controller::serialReceive() {
 		if (!processSerial(0)) {
 			// if no mode and process failed
 			Gbl::strPtr->println(F("I'm sorry Dave, I'm afraid I can't do that."));
-			Gbl::strPtr->println(F("Modes are: 'lights', 'status' or 'com'"));
+			Gbl::strPtr->println(F("Modes are: 'lights', 'status', 'com' or 'clock'"));
 			outputMode();
 		}
 	}
@@ -70,7 +70,7 @@ void Controller::serialRead() {
 	Gbl::strPtr->println(F("serialRead"));
 	Gbl::freeRam();
 #endif
-	// put the data inot the temporary array
+	// put the data into the temporary array
 	char dataAr[100];
 	byte length = Gbl::strPtr->readBytesUntil(
 		'\n',
@@ -86,16 +86,18 @@ void Controller::serialRead() {
 			// loop, set all spaces to null terminator recording into data member
 			prevDataAr[i] = dataAr[i];
 			// record the position of each word
-			if (dataAr[i] == ' ' || wordCount == maxWords+1) {
-				dataAr[i] = '\0';
+			if (prevDataAr[i] == ' ' || wordCount == maxWords+1) {
+				prevDataAr[i] = '\0';
 				spaceFlag = true;
 			} else if (spaceFlag == true) {
-				wordPtrs[wordCount] = dataAr+i;
+				wordPtrs[wordCount] = prevDataAr+i;
 				spaceFlag = false;
 				wordCount++;
 			}
 		}
-		if (wordCount > maxWords) wordCount = maxWords; // can have no more than 5 words
+		// can have no more than 5 words
+		if (wordCount > maxWords) wordCount = maxWords;
+	}
 #ifdef DEBUG
 		Gbl::strPtr->println(F("wordCoutn"));
 		Gbl::strPtr->println(wordCount);
@@ -104,7 +106,6 @@ void Controller::serialRead() {
 			Gbl::strPtr->println(wordPtrs[j]);
 		}
 #endif
-	}
 }
 
 bool Controller::checkForRepeat(char *dataAr)  {
@@ -113,8 +114,10 @@ bool Controller::checkForRepeat(char *dataAr)  {
 	Gbl::freeRam();
 #endif
 	if ('\0' == dataAr[0] || '\r' == dataAr[0]) {
+		Gbl::strPtr->println(F("repeat"));
         return true;
     }
+	Gbl::strPtr->println(F("no repeat"));
     return false;
 }
 
@@ -123,14 +126,15 @@ bool Controller::checkForMode()  {
     Gbl::strPtr->println(F("checkForMode"));
 	Gbl::freeRam();
 #endif
-	if (strcasecmp(wordPtrs[0], "lights") == 0 && mode != LIGHTS) {
+	if (strcasecmp(wordPtrs[0], "lights") == 0) {
         mode = LIGHTS;
-    } else if (strcasecmp(wordPtrs[0], "status") == 0 && mode != STATUS) {
+    } else if (strcasecmp(wordPtrs[0], "status") == 0) {
         mode = STATUS;
-    } else if (strcasecmp(wordPtrs[0], "com") == 0 && mode != COM) {
+    } else if (strcasecmp(wordPtrs[0], "com") == 0) {
         mode = COM;
-    } else if (strcasecmp(wordPtrs[0], "time") == 0 && mode != TIME) {
-        mode = TIME;
+    } else if (strcasecmp(wordPtrs[0], "clock") == 0
+    		|| strcasecmp(wordPtrs[0], "timer") == 0) {
+        mode = CLOCK;
     } else {
     	return false;
     }
@@ -150,8 +154,8 @@ void Controller::outputMode() {
 	case COM:
 		Gbl::strPtr->print(F("COM Mode"));
 		break;
-	case TIME:
-		Gbl::strPtr->print(F("TIME Mode"));
+	case CLOCK:
+		Gbl::strPtr->print(F("CLOCK Mode"));
 		break;
 	}
 }
@@ -171,7 +175,7 @@ bool Controller::processSerial(byte firstWord) {
         return statusCtr.actionSerial(&wordPtrs[firstWord], wordCount-firstWord);
 #endif
 #ifdef TME
-    case TIME:
+    case CLOCK:
         return timeCtr.actionSerial(&wordPtrs[firstWord], wordCount-firstWord);
 #endif
     }

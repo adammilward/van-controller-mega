@@ -28,6 +28,7 @@ public:
     static const byte BLUE_PIN = 2;   //  | |    | |
     static const byte IREC_PIN = 5;  //  out  0  v+
     static const byte HEATER = 23;
+    static const byte WATER = 22;
 #endif
 #ifdef UNO		                      //   ________
     static const byte RED_PIN = 9;    //  |   __   |
@@ -35,6 +36,7 @@ public:
     static const byte BLUE_PIN = 11;   //  | |    | |
     static const byte IREC_PIN = 5;  //  out  0  v+
     static const byte HEATER = 13;
+    static const byte WATER = 12;
 #endif
 
 

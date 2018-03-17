@@ -2,7 +2,7 @@
 //This is a automatic generated file
 //Please do not modify this file
 //If you touch this file your change will be overwritten during the next build
-//This file has been generated on 2018-03-15 22:48:29
+//This file has been generated on 2018-03-17 15:46:30
 
 #include "Arduino.h"
 #define DEBUG
@@ -11,9 +11,6 @@
 #include "Controller.h"
 #include "Gbl.h"
 extern Controller masterCtr;
-extern Light Red;
-extern Light Green;
-extern Light Blue;
 #define TME
 #include <DS3231.h>
 #include "TimeCtr.h"

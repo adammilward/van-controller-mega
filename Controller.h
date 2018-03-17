@@ -36,14 +36,14 @@ private:
 
     enum IRMode {IR_LIGHTS, IR_MP3};
     IRMode iRMode = IR_LIGHTS;
-    enum Mode {LIGHTS, STATUS, COM, TIME};
-    Mode mode = STATUS;
+    enum Mode {LIGHTS, STATUS, COM, CLOCK};
+    Mode mode = CLOCK;
 
     unsigned long int storedCode = 0;  // for sending when hold is pressed
 
     static constexpr byte maxLetters = 30;
     char prevDataAr[maxLetters];
-    static constexpr byte maxWords = 6;
+    static constexpr byte maxWords = 7;
     char *wordPtrs[maxWords];
     byte wordCount = 0;
 

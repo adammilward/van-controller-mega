@@ -29,16 +29,14 @@ public:
 
 private:
 
-	bool help();
 
-	void heaterOn(int);
-	void heaterOff(int);
-	void waterOn(int);
-	void waterOff(int);
-	void lightsFadeOn(int);
-	void lightsFadeOff(int);
 
-	typedef void (TimeCtr::*actionFcn)(int);
+	static const byte HEATER_DELAY = 60;
+	static const uint32_t DAY_SECONDS = 86400;
+	byte reportDelaySec = 0;
+	unsigned long prevReportMillis = 0;
+	byte const alarmsDelaySec = 15;
+	unsigned long prevAlarmsMillis = 0;
 
 	enum Status {ON, OFF};
 	enum UtilID {LIGHTS, HEATER, WATER};
@@ -46,17 +44,13 @@ private:
 	struct Alarm {
 		bool active = false;
 		bool repeat = false;
-		actionFcn onPtr;
-		uint8_t fcnParam = 60;
+		byte timerMins = 60;
 		uint32_t timeStamp = 0;
-		uint8_t h = 0;
-		uint8_t m = 0;
+		byte h = 0;
+		byte m = 0;
 	};
 	struct Timer {
-		actionFcn offPtr;
-		uint8_t fcnParam = 60;
 		uint32_t timeStamp = 0;
-		uint8_t durationMins = 0;
 	};
 	struct Utility {
 		UtilID ID;
@@ -66,43 +60,41 @@ private:
 		Timer timer;
 	};
 
-	actionFcn testPtr;
-
 	Utility heater;
 	Utility water;
 	Utility lights;
 
-	byte reportDelaySec = 0;
-	unsigned long waitMillisReport = 0;
+	bool help();
 
+	void alarmsTimer();
+	void checkAlarm(Utility&, uint32_t);
+	void utilAlarmAction(Utility&, uint32_t);
+	void utilActivateTimer(Utility&, byte, uint32_t);
+	void utilResetAlarm(Utility&);
+	void utilOff(Utility&);
+
+	void utilAlarmOff(Utility&);
+
+	bool setUtility(char**, byte);
+	void utilityReport(Utility&);
+	bool utilitySetOn(Utility&, char**, byte);
+	bool utilitySetOff(Utility&, char**, byte);
+	bool utilitySetAlarm(Utility&, char**, byte);
+	bool utilityConfigAlarm(Utility&, byte, byte, byte timerMins = HEATER_DELAY);
+	void utilitySetTimer(Utility&, int);
+
+
+	void debugOutput(Utility&);
 	void report();
 	void setReportDelay(byte);
 
-	bool set(char**, byte);
+	bool actionSet(char**, byte);
 	bool setDay(char**, byte);
 	bool setDate(char**, byte);
 	bool setTime(char**, byte);
-
 	void outTime();
 	void outDate();
 	void outTemp();
-
-	bool timer(char**, byte);
-	void utilityReport(Utility*);
-	bool utilitySetOn(Utility*, char**, byte);
-	bool utilitySetOff(Utility*, char**, byte);
-	bool utilitySetAlarm(Utility*, char**, byte);
-
-	void utilitySetTimer(Utility*, int);
-	void utilityOff(int);
-
-	void timerOn(Timer);
-	void timerOff(Timer, byte);
-	void timerOn(Timer, byte, byte);
-	void timerOff(Timer, byte, byte);
-	void timerAlarm(Timer, byte, byte);
-
-	bool setAlarm();
 
 	char *getTimeStr(byte, byte);
 };

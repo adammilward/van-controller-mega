@@ -5,7 +5,7 @@
  *  Created on: 20 Feb 2017
  *      Author: Adam Milward
  */
-#define DEBUG
+//#define DEBUG
 //#define STAT
 //#include "StatusCtr.h"
 //#define LTS
@@ -114,10 +114,8 @@ bool Controller::checkForRepeat(char *dataAr)  {
 	Gbl::freeRam();
 #endif
 	if ('\0' == dataAr[0] || '\r' == dataAr[0]) {
-		Gbl::strPtr->println(F("repeat"));
         return true;
     }
-	Gbl::strPtr->println(F("no repeat"));
     return false;
 }
 

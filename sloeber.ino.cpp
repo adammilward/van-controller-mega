@@ -2,10 +2,10 @@
 //This is a automatic generated file
 //Please do not modify this file
 //If you touch this file your change will be overwritten during the next build
-//This file has been generated on 2018-03-17 15:46:30
+//This file has been generated on 2018-03-18 19:07:02
 
 #include "Arduino.h"
-#define DEBUG
+#define MEGA
 #include <Arduino.h>
 #include <stdlib.h>
 #include "Controller.h"

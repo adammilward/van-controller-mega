@@ -20,7 +20,8 @@ Light::Light(
 		float inUpper)
 {
     pin = inPin;            // sets the pin
-    id = ID;
+    pinMode(pin, OUTPUT);
+	id = ID;
     gain = (inGain == 0)? randomize(): inGain;
 	range = inUpper - inLower; // range between 0 and 1
 	lower = inLower * 254 + 1;

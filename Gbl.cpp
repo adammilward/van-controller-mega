@@ -1,6 +1,6 @@
 #include "Gbl.h"
 
-void Gbl::freeRam ()
+static void Gbl::freeRam ()
 {
   extern int __heap_start, *__brkval;
   int v;
@@ -8,3 +8,5 @@ void Gbl::freeRam ()
   strPtr->print(F("Free Memory: "));
   strPtr->println(freeRam);
 }
+
+

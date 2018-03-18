@@ -7,8 +7,8 @@
 
 #include "Arduino.h"
 
-#define UNO
-//#define MEGA
+//#define UNO
+#define MEGA
 
 #ifndef CONFIG_H_
 #define CONFIG_H_
@@ -17,8 +17,7 @@ public:
 
 	static Stream *strPtr;
 
-    static const byte BT_RX = 12;
-    static const byte BT_TX = 13;
+
 
     static const byte DELAY_MIN = 1;
     static const unsigned int DELAY_MAX = 256;
@@ -27,17 +26,19 @@ public:
     static const byte GREEN_PIN = 3;  //  |  /  \  |
     static const byte BLUE_PIN = 2;   //  | |    | |
     static const byte IREC_PIN = 5;  //  out  0  v+
-    static const byte HEATER = 23;
-    static const byte WATER = 22;
+    static const byte HEATER = 10;
+    static const byte WATER = 11;
 #endif
 #ifdef UNO		                      //   ________
     static const byte RED_PIN = 9;    //  |   __   |
     static const byte GREEN_PIN = 10;  //  |  /  \  |
     static const byte BLUE_PIN = 11;   //  | |    | |
     static const byte IREC_PIN = 5;  //  out  0  v+
-    static const byte HEATER = 13;
-    static const byte WATER = 12;
-#endif
+    static const byte HEATER = 10;
+    static const byte WATER = 11;
+    static const byte BT_RX = 12;
+    static const byte BT_TX = 13;
+    #endif
 
 
     static constexpr float A0_FACTOR = 0.027305029;
@@ -53,6 +54,5 @@ public:
     static constexpr float A4_FACTOR = 0.01460;*/
 
     static void freeRam();
-
 };
 #endif /* CONFIG_H_ */

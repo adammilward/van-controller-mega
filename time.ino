@@ -1,4 +1,5 @@
-#define DEBUG
+//#define DEBUG
+#define MEGA
 
 #include <Arduino.h>
 #include <stdlib.h>
@@ -62,7 +63,9 @@ void loop()
 #endif
 		Gbl::strPtr = &Serial;
 		masterCtr.serialReceive();
+#ifdef DEBUG
 		Gbl::freeRam();
+#endif
 	}
 #ifdef MEGA
 	while (Serial3.available()) {

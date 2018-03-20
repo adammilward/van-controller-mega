@@ -39,18 +39,18 @@ private:
 	unsigned long prevAlarmsMillis = 0;
 
 	enum Status {ON, OFF};
-	enum UtilID {LIGHTS, HEATER, WATER};
+	enum UtilID {LED, HEATER, WATER};
 
 	struct Alarm {
 		bool active = false;
 		bool repeat = false;
 		byte timerMins = 60;
-		uint32_t timeStamp = 0;
+		uint32_t timeStamp = -1; //set too high to activate
 		byte h = 0;
 		byte m = 0;
 	};
 	struct Timer {
-		uint32_t timeStamp = 0;
+		uint32_t timeStamp = 0; //set low (turn off)
 	};
 	struct Utility {
 		UtilID ID;
@@ -62,27 +62,28 @@ private:
 
 	Utility heater;
 	Utility water;
-	Utility lights;
+	Utility led;
 
 	bool help();
 
 	void alarmsTimer();
 	void checkAlarm(Utility&, uint32_t);
 	void utilAlarmAction(Utility&, uint32_t);
-	void utilActivateTimer(Utility&, byte, uint32_t);
 	void utilResetAlarm(Utility&);
+	void utilActivateTimer(Utility&, byte, uint32_t);
 	void utilOff(Utility&);
 
-	void utilAlarmOff(Utility&);
+	void utilityReport(Utility&);
 
 	bool setUtility(char**, byte);
-	void utilityReport(Utility&);
 	bool utilitySetOn(Utility&, char**, byte);
 	bool utilitySetOff(Utility&, char**, byte);
 	bool utilitySetAlarm(Utility&, char**, byte);
-	bool utilityConfigAlarm(Utility&, byte, byte, byte timerMins = HEATER_DELAY);
-	void utilitySetTimer(Utility&, int);
+	bool utilityConfigAlarm(Utility&, byte, byte, int = HEATER_DELAY);
 
+	// decide how on and off perform
+	void TimeCtr::utilOffAction(Utility &);
+	void TimeCtr::utilOnAction(Utility &);
 
 	void debugOutput(Utility&);
 	void report();
@@ -96,7 +97,7 @@ private:
 	void outDate();
 	void outTemp();
 
-	char *getTimeStr(byte, byte);
+	char *getTimeStr(byte, byte, bool = false);
 };
 
 #endif /* TIMECTR_H_ */

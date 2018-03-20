@@ -17,12 +17,15 @@ TimeCtr::TimeCtr() {
 	heater.ID = HEATER;
 	heater.pin = Gbl::HEATER;
 	pinMode(Gbl::HEATER, OUTPUT);
-	digitalWrite(Gbl::HEATER, LOW);
+	utilOffAction(heater);
 
 	water.ID = WATER;
 	water.pin = Gbl::WATER;
 	pinMode(Gbl::WATER, OUTPUT);
-	digitalWrite(Gbl::WATER, LOW);
+	utilOffAction(water);
+
+	led.ID = LED;
+	led.pin = 225;
 }
 
 bool TimeCtr::actionSerial(char **wordPtrs, byte wordCount) {
@@ -46,9 +49,9 @@ bool TimeCtr::actionSerial(char **wordPtrs, byte wordCount) {
 		outDate();
     } else if (strcasecmp(wordPtrs[0], "heater") == 0
     		|| strcasecmp(wordPtrs[0], "water") == 0
-    		|| strcasecmp(wordPtrs[0], "lights") == 0)
+    		|| strcasecmp(wordPtrs[0], "led") == 0)
     {
-    	if (!setUtility(&wordPtrs[0], wordCount)) return help();
+    	if (! setUtility(&wordPtrs[0], wordCount)) return help();
     } else {
     	return help();
     }
@@ -61,7 +64,7 @@ bool TimeCtr::help() {
 	Gbl::strPtr->println(F("set time hh mm ss"));
 	Gbl::strPtr->println(F("set date dd mm yyyy"));
 	Gbl::strPtr->println(F("set day (1-7)"));
-	Gbl::strPtr->println(F("heater|water|lights"));
+	Gbl::strPtr->println(F("heater|water|led"));
 	Gbl::strPtr->println(F("thing on|off"));
 	Gbl::strPtr->println(F("thing on|off mm"));
 	Gbl::strPtr->println(F("thing on mm mm"));
@@ -89,7 +92,7 @@ void TimeCtr::alarmsTimer() {
 	uint32_t unixTime = clock->getUnixTime(clock->getTime());
 	checkAlarm(heater, unixTime);
 	checkAlarm(water, unixTime);
-	checkAlarm(lights, unixTime);
+	checkAlarm(led, unixTime);
 }
 
 void TimeCtr::checkAlarm(Utility &util, uint32_t unixTime) {
@@ -98,12 +101,19 @@ void TimeCtr::checkAlarm(Utility &util, uint32_t unixTime) {
 		if (unixTime >= util.timer.timeStamp) {
 			utilOff(util);
 		}
-	} else if (OFF == util.status && util.alarm.active) {
+	}
+	if (util.alarm.active) {
 		// off mode, check alarm to turn on
 		if (unixTime >= util.alarm.timeStamp) {
 			utilAlarmAction(util, unixTime);
 		}
 	}
+	if (unixTime >= util.alarm.timeStamp) {
+		Gbl::strPtr->println(F("DANGER"));
+		Gbl::strPtr->println(F("unixTime > util.alarm.timeStamp"));
+		utilityReport(util);
+	}
+
 }
 
 void TimeCtr::utilAlarmAction(Utility &util, uint32_t unixTime) {
@@ -118,34 +128,45 @@ void TimeCtr::utilAlarmAction(Utility &util, uint32_t unixTime) {
 }
 
 void TimeCtr::utilResetAlarm(Utility &util) {
-	if (util.alarm.repeat) {
-		util.alarm.active = true;
-		util.alarm.timeStamp = util.alarm.timeStamp + DAY_SECONDS;
-	} else {
-		utilAlarmOff(util);
-	}
+	util.alarm.timeStamp = util.alarm.timeStamp + DAY_SECONDS;
+	util.alarm.active = util.alarm.repeat;
 }
 
 void TimeCtr::utilActivateTimer(Utility &util, byte duration, uint32_t unixTime) {
 #ifdef DEBUG
-	Gbl::strPtr->println(F("TimeCtr::activateTimer"));
+	Gbl::strPtr->println(F("TimeCtr::utilActivateTimer"));
 	Gbl::strPtr->print(F("duration "));
 	Gbl::strPtr->println(duration);
-	debugOutput(util);
 	Gbl::freeRam();
 #endif
-	digitalWrite(util.pin, HIGH);
+	utilOnAction(util);
 	util.status = ON;
 	util.timer.timeStamp = (duration) ?
-			(unixTime + HEATER_DELAY) : (unixTime + duration); // * 60 todo
-	debugOutput(util);
+			(unixTime + duration) : (unixTime + HEATER_DELAY); // * 60 todo
+	utilityReport(util);
 }
 
 void TimeCtr::utilOff(Utility &util) {
-	debugOutput(util);
-	digitalWrite(util.pin, LOW);
+	utilityReport(util);
+	utilOffAction(util);
 	util.status = OFF;
-	debugOutput(util);
+	utilityReport(util);
+}
+
+void TimeCtr::utilOffAction(Utility &util) {
+	if (LED == util.ID) {
+
+	} else {
+		digitalWrite(util.pin, LOW);;
+	}
+}
+
+void TimeCtr::utilOnAction(Utility &util) {
+	if (LED == util.ID) {
+
+	} else {
+		digitalWrite(util.pin, HIGH);
+	}
 }
 
 bool TimeCtr::actionSet(char **wordPtrs, byte wordCount) {
@@ -153,7 +174,7 @@ bool TimeCtr::actionSet(char **wordPtrs, byte wordCount) {
 	Gbl::strPtr->println(F("TimeCtr::set"));
 	Gbl::freeRam();
 	for (byte i = 0; i < wordCount; i++) {
-		Gbl::strPtr->print("word number:");
+		Gbl::strPtr->print(F("word number:"));
 		Gbl::strPtr->println(i);
 		Gbl::strPtr->println(wordPtrs[i]);
 	}
@@ -176,7 +197,7 @@ bool TimeCtr::setDay(char **wordPtrs, byte wordCount) {
 	Gbl::strPtr->println(F("TimeCtr::setDay"));
 	Gbl::freeRam();
 	for (byte i = 0; i < wordCount; i++) {
-		Gbl::strPtr->print("word number:");
+		Gbl::strPtr->print(F("word number:"));
 		Gbl::strPtr->println(i);
 		Gbl::strPtr->println(wordPtrs[i]);
 	}
@@ -245,44 +266,44 @@ bool TimeCtr::setUtility(char** wordPtrs, byte wordCount) {
 		Gbl::strPtr->println(F("water"));
 		utilPtr = &water;
 	} else {
-		Gbl::strPtr->println(F("lights"));
-		utilPtr = &lights;
+		Gbl::strPtr->println(F("LEDs"));
+		utilPtr = &led;
 	}
+
+	bool retVal = false;
+// todo check worod count hear
+	// eg 1, 2 , 3
 
 	if (1 == wordCount) {
-		utilityReport(*utilPtr);
-		return true;
+		// this is called later by default
+		//utilityReport(*utilPtr);
+		retVal = true;
 	} else if (strcasecmp(wordPtrs[1], "on") == 0) {
-		return utilitySetOn(*utilPtr, &wordPtrs[2], wordCount - 2);
+		retVal = utilitySetOn(*utilPtr, &wordPtrs[2], wordCount - 2);
 	} else if (strcasecmp(wordPtrs[1], "off") == 0) {
-		return utilitySetOff(*utilPtr, &wordPtrs[2], wordCount - 2);
+		retVal = utilitySetOff(*utilPtr, &wordPtrs[2], wordCount - 2);
 	} else if (strcasecmp(wordPtrs[1], "alarm") == 0) {
-		return utilitySetAlarm(*utilPtr, &wordPtrs[2], wordCount - 2);
+		retVal = utilitySetAlarm(*utilPtr, &wordPtrs[2], wordCount - 2);
 	}
 
-	return false;
+	if (retVal) utilityReport(*utilPtr);
+	return retVal;
 }
 
 void TimeCtr::utilityReport(Utility &util) {
 	uint32_t unixTime = clock->getUnixTime(clock->getTime());
 	int32_t seconds = util.alarm.timeStamp - unixTime;
-
-	Gbl::strPtr->println();
-	Gbl::strPtr->println(unixTime);
-	Gbl::strPtr->println(util.alarm.timeStamp);
-	Gbl::strPtr->println(seconds);
-	Gbl::strPtr->println();
-
+// todo sort out secontd > 1 day
 	int hours = seconds/60/60;
 	int mins = (seconds/60) % 60;
 
 	Gbl::strPtr->println(
 			(util.ID == HEATER) ? F("HEATER") : (
 				(util.ID == WATER) ? F("WATER") : (
-					(util.ID == LIGHTS) ? F("LIGHTS") : F("dunno")
+					(util.ID == LED) ? F("LEDs") : F("dunno")
 	)));
 	if (ON == util.status) {
-		Gbl::strPtr->print(F("ON for "));
+		Gbl::strPtr->print(F("ON for: "));
 		Gbl::strPtr->print(
 			(util.timer.timeStamp - unixTime) / 60
 		);
@@ -290,29 +311,32 @@ void TimeCtr::utilityReport(Utility &util) {
 	} else {
 		Gbl::strPtr->println(F("OFF"));
 	}
-	Gbl::strPtr->print(F("alarm "));
-	Gbl::strPtr->println((util.alarm.active) ? F(" ON") : F(" OFF"));
+	Gbl::strPtr->println();
+	Gbl::strPtr->print(F("Alarm: "));
+	if (util.alarm.active) {
+		Gbl::strPtr->print(F("will come on on in: "));
+		Gbl::strPtr->print(getTimeStr(hours, mins, true));
+		Gbl::strPtr->println(F("m "));
+	} else {
+		Gbl::strPtr->println(F("off"));
+	}
 	Gbl::strPtr->print(F("set for "));
 	Gbl::strPtr->println(getTimeStr(util.alarm.h, util.alarm.m));
 	Gbl::strPtr->println((util.alarm.repeat) ? F("repeat") : F("once"));
-	Gbl::strPtr->print(F("On in "));
-	Gbl::strPtr->println(getTimeStr(hours, mins));
-	Gbl::strPtr->println(seconds);
+	Gbl::strPtr->print(F("on duration min: "));
+	Gbl::strPtr->println(util.alarm.timerMins);
 
 	Gbl::strPtr->println();
-
-
-
-	Gbl::strPtr->println(util.ID);
-	Gbl::strPtr->println(util.pin);
-	Gbl::strPtr->println((util.status == OFF) ? "off" : "on");
-	Gbl::strPtr->println((util.alarm.active) ? "active" : "inactive");
-	Gbl::strPtr->println((util.alarm.repeat) ? "repeat" : "once");
-	Gbl::strPtr->println(util.alarm.timerMins);
+	Gbl::strPtr->print(F("unixTime                   "));
+	Gbl::strPtr->println(unixTime);
+	Gbl::strPtr->print(F("util.alarm.timeStamp       "));
 	Gbl::strPtr->println(util.alarm.timeStamp);
-	Gbl::strPtr->println(util.alarm.h);
-	Gbl::strPtr->println(util.alarm.m);
+	Gbl::strPtr->print(F("util.timer.timeStamp       "));
 	Gbl::strPtr->println(util.timer.timeStamp);
+	Gbl::strPtr->print(F("alarm.timeStamp - unixTime "));
+	Gbl::strPtr->println(seconds);
+	Gbl::strPtr->println();
+
 }
 
 bool TimeCtr::utilitySetOn(Utility& util, char** wordPtrs, byte wordCount) {
@@ -337,7 +361,7 @@ bool TimeCtr::utilitySetOff(Utility& util, char** wordPtrs, byte wordCount) {
 	return true;
 }
 
-void TimeCtr::debugOutput(Utility& util) {
+void TimeCtr::debugOutput(Utility& util) { // todo remove
 		Gbl::strPtr->println(util.ID);
 		Gbl::strPtr->println(util.pin);
 		Gbl::strPtr->println((util.status == OFF) ? "off" : "on");
@@ -354,22 +378,32 @@ bool TimeCtr::utilitySetAlarm(Utility& util, char** wordPtrs, byte wordCount) {
 #ifdef DEBUG
 	Gbl::strPtr->println(F("TimeCtr::setAlarm"));
 	Gbl::freeRam();
-	Gbl::strPtr->println(wordCount);
-	Gbl::strPtr->println(wordPtrs[0]);
-	Gbl::strPtr->println(wordPtrs[1]);
-	Gbl::strPtr->println(wordPtrs[2]);
+	for (byte i = 0; i < wordCount; i++) {
+		Gbl::strPtr->print(F("word count: "));
+		Gbl::strPtr->println(wordCount);
+		Gbl::strPtr->print(F("word number: "));
+		Gbl::strPtr->println(i);
+		Gbl::strPtr->println(wordPtrs[i]);
+	}
 #endif
-	if (0 == wordCount) {
+	if (1 == wordCount) {
 		if (strcasecmp(wordPtrs[0], "off") == 0) {
-			Gbl::strPtr->println(F("alarm off"));
-			utilAlarmOff(util);
+			Gbl::strPtr->println(F("alarm off "));
+			util.status = OFF;
+			return true;
+		} else if (strcasecmp(wordPtrs[0], "on") == 0) {
+			Gbl::strPtr->println(F("alarm on "));
+			util.alarm.active = true;
+			if (util.alarm.timeStamp <= clock->getUnixTime(clock->getTime())) {
+				util.alarm.timeStamp += DAY_SECONDS;
+			}
 			return true;
 		} else if (strcasecmp(wordPtrs[0], "repeat") == 0) {
-			Gbl::strPtr->println(F("alarm repeat"));
+			Gbl::strPtr->println(F("alarm repeat "));
 			util.alarm.repeat = true;
 			return true;
 		} else if (strcasecmp(wordPtrs[0], "once") == 0) {
-			Gbl::strPtr->println(F("alarm once"));
+			Gbl::strPtr->println(F("alarm once "));
 			util.alarm.repeat = false;
 			return true;
 		}
@@ -400,7 +434,7 @@ bool TimeCtr::utilityConfigAlarm(
 		Utility& util,
 		byte h,
 		byte m,
-		byte timerMins
+		int timerMins
 ) {
 #ifdef DEBUG
 	Gbl::strPtr->println(F("TimeCtr::ConfigAlarm"));
@@ -415,7 +449,7 @@ bool TimeCtr::utilityConfigAlarm(
 	util.alarm.active = true;
 	util.alarm.h = h;
 	util.alarm.m = m;
-	util.alarm.timerMins = timerMins;
+	util.alarm.timerMins = (timerMins > 255) ? 255 : timerMins;
 
 	Time time = clock->getTime();
 	uint32_t currentUnixTime = clock->getUnixTime(time);
@@ -423,18 +457,12 @@ bool TimeCtr::utilityConfigAlarm(
 	time.min = m;
 	uint32_t alarmUnixTime = clock->getUnixTime(time);
 
-	if (alarmUnixTime < currentUnixTime) {
+	if (alarmUnixTime <= currentUnixTime) {
 		alarmUnixTime += DAY_SECONDS;
 	}
 	util.alarm.timeStamp = alarmUnixTime;
 
-	utilityReport(util);
 	return true;
-}
-
-void TimeCtr::utilAlarmOff(Utility& util) {
-	util.alarm.active = false;
-	util.alarm.timeStamp = 0;
 }
 
 void TimeCtr::report() {
@@ -480,20 +508,27 @@ void TimeCtr::outTemp() {
    	Gbl::strPtr->println(F(" C"));
 }
 
-char *TimeCtr::getTimeStr(byte h, byte m)
+char *TimeCtr::getTimeStr(byte h, byte m, bool longFormat)
 {
-    static char output[] = "xxxxxx";
+    static char output[] = "xxxxxxx";
     if (h<10)
         output[0]=48;
     else
         output[0]=char((h / 10)+48);
     output[1]=char((h % 10)+48);
-    output[2]=58;
+
+    byte i = 2;
+    if (longFormat) {
+    	output[i++] = 'h';
+    	output[i++] = ' ';
+    } else {
+    	output[i++] = 58;
+    }
     if (m<10)
-        output[3]=48;
+        output[i++]=48;
     else
-        output[3]=char((m / 10)+48);
-    output[4]=char((m % 10)+48);
-    output[5]=0;
+        output[i++]=char((m / 10)+48);
+    output[i++]=char((m % 10)+48);
+    output[i++]=0;
     return output;
 }

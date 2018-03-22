@@ -65,9 +65,7 @@ bool TimeCtr::help() {
 	Gbl::strPtr->println(F("set date dd mm yyyy"));
 	Gbl::strPtr->println(F("set day (1-7)"));
 	Gbl::strPtr->println(F("heater|water|led"));
-	Gbl::strPtr->println(F("thing on|off"));
-	Gbl::strPtr->println(F("thing on|off mm"));
-	Gbl::strPtr->println(F("thing on mm mm"));
+	Gbl::strPtr->println(F("thing on|off [mm]"));
 	Gbl::strPtr->println(F("thing alarm hh mm [mm]"));
 	return false;
 }

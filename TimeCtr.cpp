@@ -87,7 +87,12 @@ void TimeCtr::actionTimer(unsigned long millis) {
 }
 
 void TimeCtr::alarmsTimer() {
-	uint32_t unixTime = clock->getUnixTime(clock->getTime());
+	timeNow = clock->getTime()'
+	uint32_t unixTime = clock->getUnixTime(time);
+	
+	// set delay to hit the next minute, 00 seconds
+	alarmDelaySec = (time.sec < 30) ? 60 - time.sec : 60 + time.sec;
+	
 	checkAlarm(heater, unixTime);
 	checkAlarm(water, unixTime);
 	checkAlarm(led, unixTime);
@@ -126,21 +131,23 @@ void TimeCtr::utilAlarmAction(Utility &util, uint32_t unixTime) {
 }
 
 void TimeCtr::utilResetAlarm(Utility &util) {
+	// no need to - 5s, time stamp is already 5 seconds leess than on min
 	util.alarm.timeStamp = util.alarm.timeStamp + DAY_SECONDS;
 	util.alarm.active = util.alarm.repeat;
 }
 
-void TimeCtr::utilActivateTimer(Utility &util, byte duration, uint32_t unixTime) {
+void TimeCtr::utilActivateTimer(Utility &util, byte inDuration, uint32_t unixTime) {
 #ifdef DEBUG
 	Gbl::strPtr->println(F("TimeCtr::utilActivateTimer"));
 	Gbl::strPtr->print(F("duration "));
-	Gbl::strPtr->println(duration);
+	Gbl::strPtr->println(inDuration);
 	Gbl::freeRam();
 #endif
 	utilOnAction(util);
 	util.status = ON;
-	util.timer.timeStamp = (duration) ?
-			(unixTime + duration) : (unixTime + HEATER_DELAY); // * 60 todo
+	util.timer.timeStamp = (inDuration) ?
+		// on until: timeStamp + duration - 5 seconds, to come on on the minute
+		(unixTime + inDuration - 5) : (unixTime + HEATER_DELAY - 5); // * 60 todo
 	utilityReport(util);
 }
 
@@ -447,7 +454,7 @@ bool TimeCtr::utilityConfigAlarm(
 	util.alarm.active = true;
 	util.alarm.h = h;
 	util.alarm.m = m;
-	util.alarm.timerMins = (timerMins > 255) ? 255 : timerMins;
+	util.alarm.timerMins = (timerMins > 120) ? 120 : timerMins; // todo less than 10 mins
 
 	Time time = clock->getTime();
 	uint32_t currentUnixTime = clock->getUnixTime(time);
@@ -458,7 +465,9 @@ bool TimeCtr::utilityConfigAlarm(
 	if (alarmUnixTime <= currentUnixTime) {
 		alarmUnixTime += DAY_SECONDS;
 	}
-	util.alarm.timeStamp = alarmUnixTime;
+	// timeStamp is 5 seconds less than  the time set
+	// so it will activate on the minute
+	util.alarm.timeStamp = alarmUnixTime - 5;
 
 	return true;
 }

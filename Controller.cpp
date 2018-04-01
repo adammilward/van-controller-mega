@@ -7,17 +7,18 @@
  */
 //#define DEBUG
 //#define STAT
-//#include "StatusCtr.h"
+//#include "StatusCled tr.h"
 #define LTS
 //#define IR
 #include "LightCtr.h"
 
 #define TME
+#include "TimeCtr.h"
 
 #include "Arduino.h"
 #include "Controller.h"
 #include "Gbl.h"
-#include "TimeCtr.h"
+
 
 
 Controller::Controller() {
@@ -87,7 +88,7 @@ void Controller::serialRead() {
 			// loop, set all spaces to null terminator recording into data member
 			prevDataAr[i] = dataAr[i];
 			// record the position of each word
-			if (prevDataAr[i] == ' ' || wordCount == maxWords+1) {
+			if (prevDataAr[i] == ' ' || prevDataAr[i] == '\0' || wordCount == maxWords+1) {
 				prevDataAr[i] = '\0';
 				spaceFlag = true;
 			} else if (spaceFlag == true) {
@@ -100,8 +101,10 @@ void Controller::serialRead() {
 		if (wordCount > maxWords) wordCount = maxWords;
 	}
 #ifdef DEBUG
-		Gbl::strPtr->println(F("wordCoutn"));
+		Gbl::strPtr->print(F("wordCoutnt: "));
 		Gbl::strPtr->println(wordCount);
+		Gbl::strPtr->print(F("commandLength: "));
+		Gbl::strPtr->println(length);
 		for(byte j = 0; j <= wordCount-1; j++) {
 			Gbl::strPtr->println(j);
 			Gbl::strPtr->println(wordPtrs[j]);

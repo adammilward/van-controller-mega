@@ -47,7 +47,8 @@ void setup()
 	Clock.begin();
 #endif
 	Gbl::strPtr->println(F("we are programmed to receive"));
-	Gbl::freeRam();
+	//Gbl::strPtr->println(F("************ RESET *************"));
+	LightCtr::setFadeOffQuick(1);
 }
 
 

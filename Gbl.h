@@ -20,7 +20,7 @@ public:
 
 
     static const byte DELAY_MIN = 1;
-    static const unsigned int DELAY_MAX = 256;
+    static const byte DELAY_MAX = 255;
 #ifdef MEGA		                      //   ________
     static const byte RED_PIN = 4;    //  |   __   |
     static const byte GREEN_PIN = 3;  //  |  /  \  |

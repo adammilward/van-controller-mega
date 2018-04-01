@@ -40,7 +40,7 @@ private:
 	struct Alarm {
 		bool active = false;
 		bool repeat = false;
-		byte timerMins = 60;
+		byte timerMins = 30;
 		uint32_t timeStamp = -1; //set too high to activate
 		byte h = 0;
 		byte m = 0;
@@ -66,7 +66,7 @@ private:
 	void checkAlarm(Utility&, uint32_t);
 	void utilAlarmAction(Utility&, uint32_t);
 	void utilResetAlarm(Utility&);
-	void utilActivateTimer(Utility&, byte, uint32_t);
+	void utilActivateTimerOn(Utility&, byte, uint32_t);
 	void utilOff(Utility&);
 
 	void utilityReport(Utility&);
@@ -79,9 +79,8 @@ private:
 
 	// decide how on and off perform
 	void utilOffAction(Utility &);
-	void utilOnAction(Utility &);
+	void utilOnAction(Utility &, byte);
 
-	void debugOutput(Utility&);
 	void report();
 	void setReportDelay(byte);
 

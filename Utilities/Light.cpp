@@ -85,10 +85,10 @@ void Light::set(float setBase, bool flash) {
 		//Serial.println(setBase);
 		analogWrite(pin, (power));
 	}
-	 Gbl::strPtr->print(F("base= "));
-     Gbl::strPtr->println(base);
-	 Gbl::strPtr->print(F("power= "));
-     Gbl::strPtr->println(power);
+//	 Gbl::strPtr->print(F("base= "));
+//     Gbl::strPtr->println(base);
+//	 Gbl::strPtr->print(F("power= "));
+//     Gbl::strPtr->println(power);
 }
 
 // change power of light automatically
@@ -113,9 +113,9 @@ void Light::slide() {
 void Light::fade() {
 	base = base + (shiftOp * gain);	    // update base
 	// switch direction if required and return value between 1 and 255
-	if (base >= 1) {
+	if (base > 1) {
 		base = 1;		        // set base to max
-	} else if (base <= 0) {
+	} else if (base < 0) {
 		base = 0;
 		//Serial.println(gain*10000);
 	}
@@ -229,10 +229,10 @@ void Light::changeLower(char op, float change) {
     base = 0;
     flashOff();
 
-     Gbl::strPtr->print(F("upper= "));
+/*     Gbl::strPtr->print(F("upper= "));
      Gbl::strPtr->println(tempUpper);
      Gbl::strPtr->print(F("lower= "));
-     Gbl::strPtr->println(tempLower);
+     Gbl::strPtr->println(tempLower);*/
 }
 /**
  * range from 0.2 to 1 increments of 0.2
@@ -266,10 +266,10 @@ void Light::changeUpper(char op, float change) {
     base = 1;
     flashOff();
 
-     Gbl::strPtr->print(F("upper= "));
+/*     Gbl::strPtr->print(F("upper= "));
      Gbl::strPtr->println((tempUpper));
      Gbl::strPtr->print(F("lower= "));
-     Gbl::strPtr->println((tempLower));
+     Gbl::strPtr->println((tempLower));*/
 }
 
 

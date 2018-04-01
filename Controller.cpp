@@ -8,9 +8,10 @@
 //#define DEBUG
 //#define STAT
 //#include "StatusCtr.h"
-//#define LTS
+#define LTS
 //#define IR
-//#include "LightCtr.h"
+#include "LightCtr.h"
+
 #define TME
 
 #include "Arduino.h"

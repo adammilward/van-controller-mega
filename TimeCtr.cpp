@@ -73,26 +73,31 @@ bool TimeCtr::help() {
 void TimeCtr::actionTimer(unsigned long millis) {
 	if (reportDelaySec
 			&&
-			(unsigned long)(millis - prevReportMillis) >= reportDelaySec * 1000)
+			(unsigned long)(millis - prevReportMillis)
+				>= (unsigned long)reportDelaySec * 1000)
     {
 		prevReportMillis = millis;
 		report();
-	} else if (alarmsDelaySec
-			&&
-			(unsigned long)(millis - prevAlarmsMillis) >= alarmsDelaySec * 1000)
+	} else if (
+			(unsigned long)(millis - prevAlarmsMillis)
+				>= (unsigned long)alarmsDelaySec * 1000
+		)
     {
 		prevAlarmsMillis = millis;
 		alarmsTimer();
 	}
+
 }
 
 void TimeCtr::alarmsTimer() {
-	timeNow = clock->getTime()'
-	uint32_t unixTime = clock->getUnixTime(time);
+	Time timeNow = clock->getTime();
+	uint32_t unixTime = clock->getUnixTime(timeNow);
 	
 	// set delay to hit the next minute, 00 seconds
-	alarmDelaySec = (time.sec < 30) ? 60 - time.sec : 60 + time.sec;
-	
+	alarmsDelaySec = (timeNow.sec < 30) ? 60 - timeNow.sec : 60 + timeNow.sec;
+
+	if (alarmsDelaySec != 60) Serial.println(alarmsDelaySec);
+
 	checkAlarm(heater, unixTime);
 	checkAlarm(water, unixTime);
 	checkAlarm(led, unixTime);
@@ -101,22 +106,28 @@ void TimeCtr::alarmsTimer() {
 void TimeCtr::checkAlarm(Utility &util, uint32_t unixTime) {
 	if (ON == util.status) {
 		// on mode, check timer mode to turn off
-		if (unixTime >= util.timer.timeStamp) {
+		// turn off if within 5 sec of timeStamp
+		if (unixTime >= util.timer.timeStamp - 5) {
 			utilOff(util);
 		}
 	}
 	if (util.alarm.active) {
 		// off mode, check alarm to turn on
-		if (unixTime >= util.alarm.timeStamp) {
+		// turn on if within 5 sec of timeStamp
+		if (unixTime >= util.alarm.timeStamp - 5) {
 			utilAlarmAction(util, unixTime);
 		}
 	}
-	if (unixTime >= util.alarm.timeStamp) {
+	// alarm on if arduino is turned on up to 30 minutes afte alarm time
+	if (unixTime >= util.alarm.timeStamp
+		&& unixTime < util.alarm.timeStamp + 30 * 60 ) {
 		Gbl::strPtr->println(F("DANGER"));
 		Gbl::strPtr->println(F("unixTime > util.alarm.timeStamp"));
 		utilityReport(util);
 	}
-
+#ifdef DEBUG
+	utilityReport(util);
+#endif
 }
 
 void TimeCtr::utilAlarmAction(Utility &util, uint32_t unixTime) {
@@ -160,7 +171,7 @@ void TimeCtr::utilOff(Utility &util) {
 
 void TimeCtr::utilOffAction(Utility &util) {
 	if (LED == util.ID) {
-
+		LightCtr::setFadeOff(util.alarm.timerMins);
 	} else {
 		digitalWrite(util.pin, LOW);;
 	}
@@ -168,7 +179,7 @@ void TimeCtr::utilOffAction(Utility &util) {
 
 void TimeCtr::utilOnAction(Utility &util) {
 	if (LED == util.ID) {
-
+		LightCtr::setFadeOn(util.alarm.timerMins);
 	} else {
 		digitalWrite(util.pin, HIGH);
 	}
@@ -332,6 +343,8 @@ void TimeCtr::utilityReport(Utility &util) {
 	Gbl::strPtr->println(util.alarm.timerMins);
 
 	Gbl::strPtr->println();
+
+/*	Gbl::strPtr->println();
 	Gbl::strPtr->print(F("unixTime                   "));
 	Gbl::strPtr->println(unixTime);
 	Gbl::strPtr->print(F("util.alarm.timeStamp       "));
@@ -340,7 +353,7 @@ void TimeCtr::utilityReport(Utility &util) {
 	Gbl::strPtr->println(util.timer.timeStamp);
 	Gbl::strPtr->print(F("alarm.timeStamp - unixTime "));
 	Gbl::strPtr->println(seconds);
-	Gbl::strPtr->println();
+	Gbl::strPtr->println();*/
 
 }
 
@@ -481,8 +494,16 @@ void TimeCtr::report() {
     	Gbl::strPtr->print(F("report timer: "));
     	Gbl::strPtr->println(reportDelaySec);
     }
-	Gbl::strPtr->println(clock->getUnixTime(clock->getTime()));
 
+#ifdef DEBUG
+	Gbl::strPtr->println(F("alarmsDelaySec"));
+	Gbl::strPtr->println(alarmsDelaySec);
+	Gbl::strPtr->println(F("reportDelaySec"));
+	Gbl::strPtr->println(reportDelaySec);
+	Gbl::strPtr->println((unsigned long)alarmsDelaySec * 1000);
+	Gbl::strPtr->println((unsigned long)(millis() - prevAlarmsMillis));
+	Gbl::strPtr->println((long )(millis() - prevAlarmsMillis));
+#endif
 	//Gbl::strPtr->println(reinterpret_cast<void*>(help));
 
 	// Send Unixtime for 00:00:00 on January 1th 2014

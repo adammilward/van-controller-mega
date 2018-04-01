@@ -6,7 +6,7 @@
  */
 
 #include "TimeCtr.h"
-
+#include "LightCtr.h"
 
 #ifndef REMOTERECEIVE_H_
 #define REMOTERECEIVE_H_
@@ -22,12 +22,9 @@ public:
 
     static bool isNum(char* wordAr);
 
-#ifdef LIGHS
     LightCtr lightCtr;
-#endif
-#ifdef TME
     TimeCtr timeCtr;
-#endif
+
 private:
 
 

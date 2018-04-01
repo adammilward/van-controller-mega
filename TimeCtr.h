@@ -8,7 +8,7 @@
 #include "Arduino.h"
 #include "Utilities/Light.h"
 #include "DS3231.h"
-
+#include "LightCtr.h"
 
 
 #ifndef TIMECTR_H_
@@ -18,14 +18,10 @@ class TimeCtr{
 public:
 	TimeCtr();
 
-	static Light *red;
-	static Light *green;
-	static Light *blue;
-
 	bool actionSerial(char **, byte);
 	void actionTimer(unsigned long);
 
-	static DS3231 *clock;
+	static DS3231* clock;
 
 private:
 
@@ -35,7 +31,7 @@ private:
 	static const uint32_t DAY_SECONDS = 86400;
 	byte reportDelaySec = 0;
 	unsigned long prevReportMillis = 0;
-	byte const alarmsDelaySec = 15;
+	byte alarmsDelaySec = 15;
 	unsigned long prevAlarmsMillis = 0;
 
 	enum Status {ON, OFF};
@@ -82,8 +78,8 @@ private:
 	bool utilityConfigAlarm(Utility&, byte, byte, int = HEATER_DELAY);
 
 	// decide how on and off perform
-	void TimeCtr::utilOffAction(Utility &);
-	void TimeCtr::utilOnAction(Utility &);
+	void utilOffAction(Utility &);
+	void utilOnAction(Utility &);
 
 	void debugOutput(Utility&);
 	void report();

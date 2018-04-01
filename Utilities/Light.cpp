@@ -10,7 +10,7 @@
 #include "Light.h"
 
 
-Light::fadeMode Light::fMode = Light::SIN;
+Light::fadeMode Light::fMode = SIN;
 
 Light::Light(
         byte inPin,
@@ -105,11 +105,25 @@ void Light::slide() {
 		base = 0;
 		gain = randomize();
 		//Serial.println(gain*10000);
-	} else {
 	}
 	calcPow();	            // calculate led power 1 to 255
 	analogWrite(pin, (power));
 }
+
+void Light::fade() {
+	base = base + (shiftOp * gain);	    // update base
+	// switch direction if required and return value between 1 and 255
+	if (base >= 1) {
+		base = 1;		        // set base to max
+	} else if (base <= 0) {
+		base = 0;
+		//Serial.println(gain*10000);
+	}
+	calcPow();	            // calculate led power 1 to 255
+	analogWrite(pin, (power));
+}
+
+
 // for fading lights, called by Slide()
 void Light::calcPow() {
 	float temp; // declare the temporary float for calculations

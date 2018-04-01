@@ -32,10 +32,12 @@ public:
     float gain;         // for fading the lights <= 0.002
     float lower;        // lower limit 1 to 255
     float range;        // range/multiplier 0 to
+	int shiftOp = 1;    // 1 or -1  controls the direction of shift
 
 	void shift(char op, float shiftGain = DEF_GAIN);
 	void set(float setBase, bool flash = false);
 	void slide();
+	void fade();
 	void toHalf();
 	void changeLower(char op, float change = 0.2);
 	void changeUpper(char op, float change = 0.2);
@@ -50,7 +52,6 @@ private:
 	byte pin;            // the pin for this colour
 	byte id;             // 0 = red 1 = green 2 = blue
 	// below are only used for fading
-	int shiftOp = 1;    // 1 or -1  controls the direction of shift
 
 	float randomize();
 	void calcPow();     // called from Slide()

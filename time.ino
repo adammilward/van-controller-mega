@@ -5,14 +5,18 @@
 #include <stdlib.h>
 #include "Controller.h"
 #include "Gbl.h"
-//#include "Light.h"
+#include "Utilities/Light.h"
+#include "LightCtr.h"
 
 Controller masterCtr;      // handles the remotes
 Stream *Gbl::strPtr = &Serial;
 
-//Light Red(Gbl::RED_PIN, 0);
-//Light Green(Gbl::GREEN_PIN, 1);
-//Light Blue(Gbl::BLUE_PIN, 2);
+Light Red(Gbl::RED_PIN, 0);
+Light Green(Gbl::GREEN_PIN, 1);
+Light Blue(Gbl::BLUE_PIN, 2);
+Light* LightCtr::red = &Red;
+Light* LightCtr::green = &Green;
+Light* LightCtr::blue = &Blue;
 
 //#define MEGA
 //#define BTUNO
@@ -26,10 +30,7 @@ Stream *Gbl::strPtr = &Serial;
 #include <DS3231.h>
 #include "TimeCtr.h"
 DS3231  Clock(SDA, SCL);
-DS3231 *TimeCtr::clock = &Clock;
-//Light *TimeCtr::red = &Red;
-//Light *TimeCtr::green = &Green;
-//Light *TimeCtr::blue = &Blue;
+DS3231* TimeCtr::clock = &Clock;
 #endif
 
 void setup()

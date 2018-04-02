@@ -112,6 +112,10 @@ void TimeCtr::actionTimer(unsigned long millis) {
 }
 
 void TimeCtr::alarmsTimer() {
+#ifdef DEBUG
+	report();
+#endif
+
 	if (INITIAL_ALARMS_DELAY == alarmsDelaySec) {
 		readEepAlarm(heater);
 		readEepAlarm(water);
@@ -125,9 +129,6 @@ void TimeCtr::alarmsTimer() {
 	alarmsDelaySec = (timeNow.sec < 30) ? 60 - timeNow.sec : 120 - timeNow.sec;
 
 	if (alarmsDelaySec != 60) Serial.println(alarmsDelaySec);
-#ifdef DEBUG
-	report();
-#endif
 	checkAlarm(heater, unixTime);
 	checkAlarm(water, unixTime);
 	checkAlarm(led, unixTime);
@@ -143,10 +144,10 @@ void TimeCtr::checkAlarm(Utility &util, uint32_t unixTime) {
 	}
 	if (util.alarm.active) {
 		// alarm is active check alarm to turn on (even is util is already ON)
-		// turn on if within 30 sec of timeStamp
-		// but not more than 30 min after time stamp (in case arduino was turned off)
+		// turn on upto 30 sec before timeStamp
+		// and upto alarm.timerMins min after time stamp (in case arduino was turned off)
 		if (unixTime >= util.alarm.timeStamp - 30
-				&& unixTime < util.alarm.timeStamp + 30 * 60) {
+				&& unixTime < util.alarm.timeStamp + util.alarm.timerMins * 60) {
 			utilAlarmAction(util, unixTime);
 		}
 	}

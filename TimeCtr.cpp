@@ -82,12 +82,13 @@ bool TimeCtr::actionSerial(char **wordPtrs, byte wordCount) {
 
 bool TimeCtr::help() {
 	Gbl::strPtr->println(F("Time Controller commands are:"));
-	Gbl::strPtr->println(F("report|time|date"));
+	Gbl::strPtr->println(F("report|time|date|temp"));
 	Gbl::strPtr->println(F("set time hh mm ss"));
 	Gbl::strPtr->println(F("set date dd mm yyyy"));
 	Gbl::strPtr->println(F("set day (1-7)"));
 	Gbl::strPtr->println(F("heater|water|led"));
 	Gbl::strPtr->println(F("thing on|off [mm]"));
+	Gbl::strPtr->println(F("thing alarm on|off"));
 	Gbl::strPtr->println(F("thing alarm hh mm [mm]"));
 	return false;
 }
@@ -146,12 +147,20 @@ void TimeCtr::checkAlarm(Utility &util, uint32_t unixTime) {
 		// alarm is active check alarm to turn on (even is util is already ON)
 		// turn on upto 30 sec before timeStamp
 		// and upto alarm.timerMins min after time stamp (in case arduino was turned off)
-		if (unixTime >= util.alarm.timeStamp - 30
+		if (unixTime > util.alarm.timeStamp - 30
 				&& unixTime < util.alarm.timeStamp + util.alarm.timerMins * 60) {
 			utilAlarmAction(util, unixTime);
 		}
 	}
 #ifdef DEBUG
+	Gbl::strPtr->print(F("unixTime "));
+	Gbl::strPtr->println(unixTime);
+	Gbl::strPtr->print(F("util.alarm.timeStamp: "));
+	Gbl::strPtr->println(util.alarm.timeStamp);
+	Gbl::strPtr->print(F("util.alarm.timeStamp - 30: "));
+	Gbl::strPtr->println(util.alarm.timeStamp - 30);
+	Gbl::strPtr->print(F("util.alarm.timeStamp + util.alarm.timerMins * 60: "));
+	Gbl::strPtr->println(util.alarm.timeStamp + util.alarm.timerMins * 60);
 	//utilityReport(util);
 #endif
 }
@@ -313,7 +322,6 @@ bool TimeCtr::setTime(char **wordPtrs, byte wordCount) {
 
 void TimeCtr::setReportDelay(byte delaySec) {
     reportDelaySec = delaySec;
-    prevReportMillis = millis();
 }
 
 bool TimeCtr::setUtility(char** wordPtrs, byte wordCount) {

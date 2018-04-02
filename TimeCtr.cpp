@@ -497,22 +497,22 @@ bool TimeCtr::utilityConfigAlarm(
 		Utility& util,
 		byte h,
 		byte m,
-		int timerMins
+		byte timerMins
 ) {
-#ifdef DEBUG
+//#ifdef DEBUG
 	Gbl::strPtr->println(F("TimeCtr::ConfigAlarm"));
 	Gbl::freeRam();
 	Gbl::strPtr->println(h);
 	Gbl::strPtr->println(m);
 	Gbl::strPtr->println(timerMins);
-#endif
+//#endif
 	if (h > 23 || m > 59) {
 		return false;
 	}
 	util.alarm.active = true;
 	util.alarm.h = h;
 	util.alarm.m = m;
-	util.alarm.timerMins = timerMins;
+	util.alarm.timerMins = (timerMins) ? timerMins : util.alarm.timerMins ;
 
 	return true;
 }
@@ -541,6 +541,9 @@ void TimeCtr::utilityValidate(Utility& util) {
 	time.min = util.alarm.m;
 	uint32_t alarmUnixTime = clock->getUnixTime(time);
 
+	// can be used for testing,
+	// alarm is valid if alarmTimeStamp is < timerMins after current time
+	//if (alarmUnixTime + util.alarm.timerMins * 60 <= currentUnixTime) {
 	if (alarmUnixTime <= currentUnixTime) {
 		alarmUnixTime += DAY_SECONDS;
 	}

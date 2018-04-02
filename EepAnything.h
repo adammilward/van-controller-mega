@@ -16,6 +16,8 @@ class EepAnything {
 	public:
 		static int const Gbl_AnalogPins_Start = 0;
 		static int const TimeCtr_Utilities_Start = 20;
+		static int const Next = 47;
+
 };
 
 template <class T> int EEPROM_writeAnything(int ee, const T& value)
@@ -26,6 +28,8 @@ template <class T> int EEPROM_writeAnything(int ee, const T& value)
     unsigned int i;
     for (i = 0; i < sizeof(value); i++)
           EEPROM.write(ee++, *p++);
+	Gbl::strPtr->print(F("NEXT ee: "));
+	Gbl::strPtr->println(ee);
     return ee;
 }
 

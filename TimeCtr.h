@@ -81,7 +81,7 @@ private:
 	bool utilitySetOn(Utility&, char**, byte);
 	bool utilitySetOff(Utility&, char**, byte);
 	bool utilitySetAlarm(Utility&, char**, byte);
-	bool utilityConfigAlarm(Utility&, byte, byte, int = HEATER_DELAY);
+	bool utilityConfigAlarm(Utility&, byte, byte, byte timerMins = 0);
 	void utilityValidate(Utility&);
 
 	// decide how on and off perform

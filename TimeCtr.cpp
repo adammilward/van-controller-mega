@@ -56,7 +56,9 @@ bool TimeCtr::actionSerial(char **wordPtrs, byte wordCount) {
 	Gbl::freeRam();
 #endif
 
-	if (strcasecmp(wordPtrs[0], "report") == 0) {
+	if (0 == wordCount) {
+		return true;
+	}else if (strcasecmp(wordPtrs[0], "report") == 0) {
         if (wordCount == 2 && Controller::isNum(wordPtrs[1])) {
 			setReportDelay(atoi(wordPtrs[1]));
 		}
@@ -499,13 +501,13 @@ bool TimeCtr::utilityConfigAlarm(
 		byte m,
 		byte timerMins
 ) {
-//#ifdef DEBUG
+#ifdef DEBUG
 	Gbl::strPtr->println(F("TimeCtr::ConfigAlarm"));
 	Gbl::freeRam();
 	Gbl::strPtr->println(h);
 	Gbl::strPtr->println(m);
 	Gbl::strPtr->println(timerMins);
-//#endif
+#endif
 	if (h > 23 || m > 59) {
 		return false;
 	}

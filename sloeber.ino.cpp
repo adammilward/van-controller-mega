@@ -2,7 +2,7 @@
 //This is a automatic generated file
 //Please do not modify this file
 //If you touch this file your change will be overwritten during the next build
-//This file has been generated on 2018-04-02 18:24:40
+//This file has been generated on 2018-04-02 21:54:22
 
 #include "Arduino.h"
 #include <Arduino.h>
@@ -19,6 +19,9 @@ extern Light Blue;
 #define TME
 #include <DS3231.h>
 #include "TimeCtr.h"
+extern DS3231 Clock;
+#define IR
+#include "IRremote.h"
 
 void setup() ;
 void loop() ;

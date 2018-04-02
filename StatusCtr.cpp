@@ -163,6 +163,7 @@ void StatusCtr::report() {
     Gbl::strPtr->println(F("V"));
     Gbl::strPtr->print(F("delay= "));
     Gbl::strPtr->println(reportDelaySec);
+	Gbl::freeRam();
 }
 
 void StatusCtr::csv() {

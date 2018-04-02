@@ -32,6 +32,13 @@ DS3231  Clock(SDA, SCL);
 DS3231* TimeCtr::clock = &Clock;
 #endif
 
+#define IR
+#ifdef IR
+#include "IRremote.h"
+IRrecv irrecv(Gbl::IREC_PIN);      // from the ir decode library
+decode_results Results; // from the ir decode library
+#endif
+
 void setup()
 {
 	// Setup Serial connection
@@ -46,8 +53,14 @@ void setup()
 	Clock.begin();
 #endif
 	Gbl::strPtr->println(F("we are programmed to receive"));
+	Gbl::strPtr = &Serial3;
+	Gbl::strPtr->println(F("we are programmed to receive"));
 	//Gbl::strPtr->println(F("************ RESET *************"));
 	LightCtr::setFadeOffQuick(1);
+#ifdef IR
+	pinMode(Gbl::IREC_PIN, INPUT);
+#endif
+
 }
 
 
@@ -58,21 +71,13 @@ void loop()
 
 	// run Serial commands
 	while (Serial.available()) {
-#ifdef DEBUG
-		Gbl::strPtr->println(F("Serial.available"));
-		Gbl::freeRam();
-#endif
 		Gbl::strPtr = &Serial;
 		masterCtr.serialReceive();
-#ifdef DEBUG
-		Gbl::freeRam();
-#endif
 	}
 #ifdef MEGA
 	while (Serial3.available()) {
         Gbl::strPtr = &Serial3;
         masterCtr.serialReceive();
-        Gbl::freeRam();
     }
 #endif
 

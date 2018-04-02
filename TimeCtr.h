@@ -28,7 +28,7 @@ private:
 	static const uint32_t DAY_SECONDS = 86400;
 	byte reportDelaySec = 0;
 	unsigned long prevReportMillis = 0;
-	static const byte INITIAL_ALARMS_DELAY = 15;
+	static const byte INITIAL_ALARMS_DELAY = 1;
 	byte alarmsDelaySec = INITIAL_ALARMS_DELAY;
 	unsigned long prevAlarmsMillis = 0;
 

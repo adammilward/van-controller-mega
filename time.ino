@@ -1,5 +1,4 @@
 //#define DEBUG
-#define MEGA
 
 #include <Arduino.h>
 #include <stdlib.h>
@@ -18,7 +17,7 @@ Light* LightCtr::red = &Red;
 Light* LightCtr::green = &Green;
 Light* LightCtr::blue = &Blue;
 
-//#define MEGA
+#define MEGA
 //#define BTUNO
 #ifdef BTUNO
 	#include "SoftwareSerial.h"

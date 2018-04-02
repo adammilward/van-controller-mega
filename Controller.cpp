@@ -6,32 +6,33 @@
  *      Author: Adam Milward
  */
 //#define DEBUG
-//#define STAT
-//#include "StatusCled tr.h"
+#include "Arduino.h"
+#include "Controller.h"
+#include "Gbl.h"
+
+#define STAT
+#include "StatusCtr.h"
+
 #define LTS
-//#define IR
+#define IR
 #include "LightCtr.h"
 
 #define TME
 #include "TimeCtr.h"
-
-#include "Arduino.h"
-#include "Controller.h"
-#include "Gbl.h"
 
 
 
 Controller::Controller() {
     // stop it going wappy first time something is sent
     prevDataAr[0] = '\0';
-#ifdef STAT
-   StatusCtr statusCtr;
-#endif
 #ifdef LTS
    LightCtr lightCtr;
 #endif
 #ifdef TME
    TimeCtr timeCtr;
+#endif
+#ifdef STAT
+   StatusCtr statusCtr;
 #endif
 }
 
@@ -132,8 +133,8 @@ bool Controller::checkForMode()  {
         mode = LIGHTS;
     } else if (strcasecmp(wordPtrs[0], "status") == 0) {
         mode = STATUS;
-    } else if (strcasecmp(wordPtrs[0], "com") == 0) {
-        mode = COM;
+    //} else if (strcasecmp(wordPtrs[0], "com") == 0) {
+    //    mode = COM;
     } else if (strcasecmp(wordPtrs[0], "clock") == 0
     		|| strcasecmp(wordPtrs[0], "timer") == 0) {
         mode = CLOCK;
@@ -153,9 +154,9 @@ void Controller::outputMode() {
 	case STATUS:
 		Gbl::strPtr->print(F("STATUS Mode"));
 		break;
-	case COM:
-		Gbl::strPtr->print(F("COM Mode"));
-		break;
+	//case COM:
+		//Gbl::strPtr->print(F("COM Mode"));
+		//break;
 	case CLOCK:
 		Gbl::strPtr->print(F("CLOCK Mode"));
 		break;

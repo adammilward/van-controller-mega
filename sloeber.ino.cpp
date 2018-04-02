@@ -2,10 +2,9 @@
 //This is a automatic generated file
 //Please do not modify this file
 //If you touch this file your change will be overwritten during the next build
-//This file has been generated on 2018-04-01 22:26:29
+//This file has been generated on 2018-04-02 18:24:40
 
 #include "Arduino.h"
-#define MEGA
 #include <Arduino.h>
 #include <stdlib.h>
 #include "Controller.h"
@@ -16,6 +15,7 @@ extern Controller masterCtr;
 extern Light Red;
 extern Light Green;
 extern Light Blue;
+#define MEGA
 #define TME
 #include <DS3231.h>
 #include "TimeCtr.h"

@@ -5,10 +5,9 @@
  *  Created on: 5 Dec 2016
  *      Author: Adam Milward
  */
-
-
 #include "Light.h"
 
+//#define MYBUG
 
 Light::fadeMode Light::fMode = SIN;
 

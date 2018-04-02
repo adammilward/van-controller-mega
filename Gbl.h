@@ -40,7 +40,7 @@ public:
     static const byte BT_TX = 13;
     #endif
 
-
+    static constexpr byte noAnalogPins = 5;
     static constexpr float A0_FACTOR = 0.027305029;
     static constexpr float A1_FACTOR = 0.015564788;
     static constexpr float A2_FACTOR = 0.015415081;

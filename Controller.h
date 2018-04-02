@@ -7,6 +7,7 @@
 
 #include "TimeCtr.h"
 #include "LightCtr.h"
+#include "StatusCtr.h"
 
 #ifndef REMOTERECEIVE_H_
 #define REMOTERECEIVE_H_
@@ -24,6 +25,7 @@ public:
 
     LightCtr lightCtr;
     TimeCtr timeCtr;
+    StatusCtr statusCtr;
 
 private:
 
@@ -33,7 +35,7 @@ private:
 
     enum IRMode {IR_LIGHTS, IR_MP3};
     IRMode iRMode = IR_LIGHTS;
-    enum Mode {LIGHTS, STATUS, COM, CLOCK};
+    enum Mode {LIGHTS, STATUS, CLOCK};
     Mode mode = CLOCK;
 
     unsigned long int storedCode = 0;  // for sending when hold is pressed

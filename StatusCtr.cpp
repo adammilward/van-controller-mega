@@ -20,7 +20,9 @@ bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
 	Gbl::strPtr->println(F("StatusCtr::actionSerial"));
 	Gbl::freeRam();
 #endif
-
+	if (0 == wordCount) {
+		return true;
+	}
 	if (strcasecmp(wordPtrs[0], "report") == 0) {
         Gbl::strPtr->println(F("report'"));
         if (wordCount == 2 && Controller::isNum(wordPtrs[1])) {
@@ -52,7 +54,6 @@ bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
     	Gbl::strPtr->println(F("Status Controller commands are:"));
     	Gbl::strPtr->println(F("report [nn]"));
     	Gbl::strPtr->println(F("csv [nn]"));
-    	Gbl::strPtr->println(F("(where nn is repeat delay in s)"));
     	Gbl::strPtr->println(F("raw"));
     	Gbl::strPtr->println(F("save"));
     	Gbl::strPtr->println(F("calibration"));

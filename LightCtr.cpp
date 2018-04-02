@@ -79,7 +79,9 @@ bool LightCtr::actionSerial(char **wordPtrs, byte wordCount){
 	Gbl::strPtr->println(F("wordCount"));
 	Gbl::strPtr->println(wordCount);
 #endif
-	if (1 == wordCount) {
+	if (0 == wordCount) {
+		return true;
+	} else if (1 == wordCount) {
         if (actionOneWord(wordPtrs)) {
         	report();
         	return true;
@@ -675,7 +677,7 @@ void LightCtr::turnSlideOn(){
 	Gbl::strPtr->println(F("LightCtr::turnSlideOn"));
 #endif
 	ctrMode = FADE;
-	slideDelay = 100;
+	if (! slideDelay) slideDelay = 100;
 	fadeDelay = 0;
 }
 void LightCtr::null(){};

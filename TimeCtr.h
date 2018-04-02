@@ -67,6 +67,7 @@ private:
 	void utilAlarmAction(Utility&, uint32_t);
 	void utilResetAlarm(Utility&);
 	void utilActivateTimerOn(Utility&, byte, uint32_t);
+	void utilActivateTimerOff(Utility&, byte, uint32_t);
 	void utilOff(Utility&);
 
 	void utilityReport(Utility&);

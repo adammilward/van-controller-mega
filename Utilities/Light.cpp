@@ -111,16 +111,24 @@ void Light::slide() {
 }
 
 void Light::fade() {
-	base = base + (shiftOp * gain);	    // update base
+	float temp = base + (shiftOp * gain);	    // update base
 	// switch direction if required and return value between 1 and 255
-	if (base > 1) {
-		base = 1;		        // set base to max
+	if (temp > 1) {
+		temp = 1;		        // set base to max
 	} else if (base < 0) {
-		base = 0;
+		// if increasing we must turn on to begin with
+		// if decreasing we must turn off at end
+		if (1 == shiftOp) {
+			temp = gain;
+		} else {
+			temp = -1;
+		}
+		//return;
 		//Serial.println(gain*10000);
 	}
-	calcPow();	            // calculate led power 1 to 255
-	analogWrite(pin, (power));
+	set(temp);
+	//calcPow();	            // calculate led power 1 to 255
+	//analogWrite(pin, (power));
 }
 
 

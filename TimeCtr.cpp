@@ -11,7 +11,7 @@
 #include "Controller.h"
 #include "DS3231.h"
 
-//#define DEBUG
+#define DEBUG
 
 TimeCtr::TimeCtr() {
 	heater.ID = HEATER;
@@ -145,7 +145,7 @@ void TimeCtr::utilResetAlarm(Utility &util) {
 
 void TimeCtr::utilActivateTimerOn(Utility &util, byte inDuration, uint32_t unixTime) {
 #ifdef DEBUG
-	Gbl::strPtr->println(F("TimeCtr::utilActivateTimer"));
+	Gbl::strPtr->println(F("TimeCtr::utilActivateTimerOn"));
 	Gbl::strPtr->print(F("duration "));
 	Gbl::strPtr->println(inDuration);
 	Gbl::freeRam();
@@ -156,13 +156,36 @@ void TimeCtr::utilActivateTimerOn(Utility &util, byte inDuration, uint32_t unixT
 	utilityReport(util);
 }
 
+void TimeCtr::utilActivateTimerOff(Utility &util, byte inDuration, uint32_t unixTime) {
+#ifdef DEBUG
+	Gbl::strPtr->println(F("TimeCtr::utilActivateTimerOff"));
+	Gbl::strPtr->print(F("duration "));
+	Gbl::strPtr->println(inDuration);
+	Gbl::freeRam();
+#endif
+	if (LED == util.ID) {
+		LightCtr::setFadeSlow(inDuration, -1);
+	} else {
+		utilOnAction(util, inDuration);
+	}
+	util.status = ON;
+	util.timer.timeStamp = unixTime + inDuration * 60;
+	utilityReport(util);
+}
+
 void TimeCtr::utilOff(Utility &util) {
+#ifdef DEBUG
+	Gbl::strPtr->println(F("TimeCtr::utilOff"));
+#endif
 	utilOffAction(util);
 	util.status = OFF;
 	utilityReport(util);
 }
 
 void TimeCtr::utilOffAction(Utility &util) {
+#ifdef DEBUG
+	Gbl::strPtr->println(F("TimeCtr::utilOffAction"));
+#endif
 	if (LED == util.ID) {
 		LightCtr::setFadeOffQuick(util.alarm.timerMins);
 	} else {
@@ -171,6 +194,9 @@ void TimeCtr::utilOffAction(Utility &util) {
 }
 
 void TimeCtr::utilOnAction(Utility &util, byte inDuration) {
+#ifdef DEBUG
+	Gbl::strPtr->println(F("TimeCtr::utilOnAction"));
+#endif
 	if (LED == util.ID) {
 		LightCtr::setFadeSlow(inDuration);
 	} else {
@@ -355,14 +381,13 @@ bool TimeCtr::utilitySetOn(Utility& util, char** wordPtrs, byte wordCount) {
 }
 
 bool TimeCtr::utilitySetOff(Utility& util, char** wordPtrs, byte wordCount) {
+#ifdef DEBUG
+	Gbl::strPtr->println(F("TimeCtr::utilitySetOff"));
+#endif
 	if (!wordCount) {
 		utilOff(util);
 	} else if (1 == wordCount && Controller::isNum(wordPtrs[0])) {
-		if (util.ID == LED) {
-
-		} else {
-			utilActivateTimerOn(util, atoi(wordPtrs[0]), clock->getUnixTime(clock->getTime()));
-		}
+		utilActivateTimerOff(util, atoi(wordPtrs[0]), clock->getUnixTime(clock->getTime()));
 	} else {
 		return false;
 	}

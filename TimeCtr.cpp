@@ -102,7 +102,7 @@ void TimeCtr::actionTimer(unsigned long millis) {
 		prevReportMillis = millis;
 	} else if (
 			(unsigned long)(millis - prevAlarmsMillis)
-				>= (unsigned long)(alarmsDelaySec) * 1000
+				>= (unsigned long)alarmsDelaySec * 1000
 		)
     {
 		alarmsTimer();

@@ -24,7 +24,6 @@ bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
 		return true;
 	}
 	if (strcasecmp(wordPtrs[0], "report") == 0) {
-        Gbl::strPtr->println(F("report'"));
         if (wordCount == 2 && Controller::isNum(wordPtrs[1])) {
 			setReportDelay(atoi(wordPtrs[1]));
 			reportType = REPORT;
@@ -32,7 +31,6 @@ bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
 			report();
 		}
     } else if (strcasecmp(wordPtrs[0], "csv") == 0) {
-        Gbl::strPtr->println(F("csv"));
         if (wordCount == 2 && Controller::isNum(wordPtrs[1])) {
 			setReportDelay(atoi(wordPtrs[1]));
 			reportType = CSV;
@@ -143,10 +141,7 @@ void StatusCtr::timer(unsigned long millis) {
 
 void StatusCtr::report() {
     Gbl::strPtr->println(F(""));
-    Gbl::strPtr->println(F("    ****    "));
-    Gbl::strPtr->print(F("Solar "
-            ""
-            "Panels: "));
+    Gbl::strPtr->print(F("Solar Panels: "));
     Gbl::strPtr->print(voltMeter.getVoltage(0));
     Gbl::strPtr->println(F("V"));
     Gbl::strPtr->print(F("Consumer Unit: "));

@@ -119,6 +119,8 @@ void TimeCtr::alarmsTimer() {
 	report();
 #endif
 
+	// todo check if clock is connected
+
 	if (INITIAL_ALARMS_DELAY == alarmsDelaySec) {
 		readEepAlarm(heater);
 		readEepAlarm(water);
@@ -278,9 +280,7 @@ bool TimeCtr::setDay(char **wordPtrs, byte wordCount) {
 	}
 #endif
 
-	if (wordCount == 1 && Controller::isNum(wordPtrs[0])) {
-		clock->setDOW(atoi(wordPtrs[0]));
-	} else if (0 == wordCount) {
+	if (1 == wordCount && Controller::isNum(wordPtrs[0])) {
 		clock->setDOW(atoi(wordPtrs[0]));
 	} else {
 		return false;

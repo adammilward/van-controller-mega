@@ -287,7 +287,7 @@ void LightCtr::setFadeSlow(byte timerMins, int8_t inShiftOp) {
 	int steps = 270;
 	if (-1 == inShiftOp) {
 		float gain = red->base + blue->base + green->base;
-		steps = gain * 1.5 / 0.02;
+		steps = gain * 1.2 / 0.02; // todo assess timing
 	}
 	fadeDelay = (uint32_t)timerMins * 1000 * 60 / steps;
 	slideDelay = 0;

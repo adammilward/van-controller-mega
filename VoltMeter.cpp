@@ -28,12 +28,12 @@ float VoltMeter::getVoltage(int pinNumber) {
 }
 
 uint16_t VoltMeter::readPin(byte pinNo) {
-	uint16_t analogValue = 0;
 	byte i = 2;
 	while (i--) {
 		delay(20);
-		analogValue += analogRead(pinNo);
+		analogRead(pinNo);
 	}
+	uint16_t analogValue = 0;
 	i = 5;
 	while (i--) {
 		delay(20);

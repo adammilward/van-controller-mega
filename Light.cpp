@@ -1,13 +1,15 @@
 
 /*
- * Light.cpp
+ * Utilities/Light.cpp
  *
  *  Created on: 5 Dec 2016
  *      Author: Adam Milward
  */
+
+#include "Light.h"
 #include "Light.h"
 
-//#define MYBUG
+#define MYBUG
 
 Light::fadeMode Light::fMode = SIN;
 

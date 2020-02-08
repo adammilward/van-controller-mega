@@ -5,20 +5,14 @@
  *  Created on: 20 Feb 2017
  *      Author: Adam Milward
  */
-//#define DEBUG
-#include "Arduino.h"
+#define DEBUG
 #include "Controller.h"
-#include "Gbl.h"
 
-#define STAT
-#include "StatusCtr.h"
 
+//#define STAT
 #define LTS
-#define IR
-#include "LightCtr.h"
+//#define TME
 
-#define TME
-#include "TimeCtr.h"
 
 
 
@@ -196,24 +190,6 @@ void Controller::irReceive(unsigned long inValue){
         irDecode(inValue, hCount);
     }
     delay(200);
-}
-
-
-bool Controller::isNum(char *word) {
-	boolean isNum=true;
-    const char *p;
-	p = word;
-	while (*p) {
-		isNum = (
-			isDigit(*p) ||
-			*p == '+' ||
-			*p == '.' ||
-			*p == '-'
-		);
-		if(!isNum) return false;
-		p++;
-	}
-    return true;
 }
 
 #ifdef IR

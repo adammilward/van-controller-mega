@@ -1,11 +1,11 @@
-//#define DEBUG
+#define DEBUG
 
-#include <Arduino.h>
-#include <stdlib.h>
+#include "Arduino.h"
 #include "Controller.h"
 #include "Gbl.h"
-#include "Utilities/Light.h"
 #include "LightCtr.h"
+
+
 
 Controller masterCtr;      // handles the remotes
 Stream *Gbl::strPtr = &Serial;
@@ -17,26 +17,25 @@ Light* LightCtr::red = &Red;
 Light* LightCtr::green = &Green;
 Light* LightCtr::blue = &Blue;
 
-#define MEGA
+//#define MEGA
 //#define BTUNO
 #ifdef BTUNO
 	#include "SoftwareSerial.h"
 	SoftwareSerial BT = SoftwareSerial(12, 13); // RX,TX
 #endif
 
-#define TME
-#ifdef TME
-#include <DS3231.h>
-#include "TimeCtr.h"
-DS3231  Clock(SDA, SCL);
-DS3231* TimeCtr::clock = &Clock;
+#define PI_UNO
+#ifdef PI_UNO
+	#include "SoftwareSerial.h"
+	SoftwareSerial piSerial = SoftwareSerial(2, 3); // RX,TX
 #endif
 
-#define IR
-#ifdef IR
-#include "IRremote.h"
-IRrecv irrecv(Gbl::IREC_PIN);      // from the ir decode library
-decode_results Results; // from the ir decode library
+//#define TME
+#ifdef TME
+#include <DS3231.h>
+//#include "TimeCtr.h"
+DS3231  Clock(SDA, SCL);
+DS3231* TimeCtr::clock = &Clock;
 #endif
 
 void setup()
@@ -49,18 +48,26 @@ void setup()
 #ifdef BTUNO
 	BT.begin(115200); // RX,TX
 #endif
+#ifdef PI_UNO
+	piSerial.begin(115200); // RX,TX
+#endif
 #ifdef TME
 	Clock.begin();
 #endif
 	Gbl::strPtr->println(F("we are programmed to receive"));
+#ifdef MEGA
 	Gbl::strPtr = &Serial3;
 	Gbl::strPtr->println(F("we are programmed to receive"));
-	//Gbl::strPtr->println(F("************ RESET *************"));
-	LightCtr::setFadeOffQuick(1);
-#ifdef IR
-	pinMode(Gbl::IREC_PIN, INPUT);
 #endif
-
+#ifdef BTUNO
+	Gbl::strPtr = &BT;
+	Gbl::strPtr->println(F("we are programmed to receive"));
+#endif
+#ifdef piSerial
+	Gbl::strPtr = &piSerial;
+	Gbl::strPtr->println(F("we are programmed to receive"));
+#endif
+	LightCtr::setFadeOffQuick(1);
 }
 
 
@@ -74,6 +81,7 @@ void loop()
 		Gbl::strPtr = &Serial;
 		masterCtr.serialReceive();
 	}
+
 #ifdef MEGA
 	while (Serial3.available()) {
         Gbl::strPtr = &Serial3;
@@ -83,20 +91,15 @@ void loop()
 
 #ifdef BTUNO
 	while (BT.available()) {
-#ifdef DEBUG
-		Gbl::strPtr->println(F("BT.available"));
-		Gbl::freeRam();
-#endif
         Gbl::strPtr = &BT;
         masterCtr.serialReceive();
-        Gbl::freeRam();
     }
 #endif
 
-#ifdef IR
-    if (irrecv.decode(&Results)) {
-		masterCtr.irReceive(Results.value);
-		irrecv.resume(); // Receive the next value
-	}
+#ifdef PI_UNO
+	while (piSerial.available()) {
+        Gbl::strPtr = &piSerial;
+        masterCtr.serialReceive();
+    }
 #endif
 }

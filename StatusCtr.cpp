@@ -4,12 +4,10 @@
  *  Created on: 14 Nov 2017
  *      Author: Adam Milward
  */
-#include "Controller.h"
-#include "StatusCtr.h"
-#include "VoltMeter.h"
-#include "Arduino.h" // todo remove
 
-//#define DEBUG
+#include "StatusCtr.h"
+
+#define DEBUG
 
 StatusCtr::StatusCtr(){
 	VoltMeter voltMeter;
@@ -24,14 +22,14 @@ bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
 		return true;
 	}
 	if (strcasecmp(wordPtrs[0], "report") == 0) {
-        if (wordCount == 2 && Controller::isNum(wordPtrs[1])) {
+        if (wordCount == 2 && Gbl::isNum(wordPtrs[1])) {
 			setReportDelay(atoi(wordPtrs[1]));
 			reportType = REPORT;
 		} else {
 			report();
 		}
     } else if (strcasecmp(wordPtrs[0], "csv") == 0) {
-        if (wordCount == 2 && Controller::isNum(wordPtrs[1])) {
+        if (wordCount == 2 && Gbl::isNum(wordPtrs[1])) {
 			setReportDelay(atoi(wordPtrs[1]));
 			reportType = CSV;
         } else {
@@ -83,7 +81,7 @@ bool StatusCtr::set(char **wordPtrs, byte wordCount) {
 		Gbl::strPtr->println(i);
 		Gbl::strPtr->println(wordPtrs[i]);
 #endif
-		if (Controller::isNum(wordPtrs[i])) {
+		if (Gbl::isNum(wordPtrs[i])) {
 			//
 		} else {
 			Gbl::strPtr->println("no");
@@ -91,10 +89,10 @@ bool StatusCtr::set(char **wordPtrs, byte wordCount) {
 	}
 
 	if (wordCount == 2) {
-        if (strcasecmp(wordPtrs[0], "all") == 0 && Controller::isNum(wordPtrs[1])) {
+        if (strcasecmp(wordPtrs[0], "all") == 0 && Gbl::isNum(wordPtrs[1])) {
             setAll(atof(wordPtrs[1]));
             return true;
-        } else if (Controller::isNum(wordPtrs[0])  &&  Controller::isNum(wordPtrs[1])) {
+        } else if (Gbl::isNum(wordPtrs[0])  &&  Gbl::isNum(wordPtrs[1])) {
             voltMeter.setPin(atoi(wordPtrs[0]), atof(wordPtrs[1]));
             Gbl::strPtr->println(F("value set"));
             return true;

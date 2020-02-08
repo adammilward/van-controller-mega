@@ -7,8 +7,8 @@
 
 #include "Arduino.h"
 
-//#define UNO
-#define MEGA
+#define UNO
+//#define MEGA
 
 #ifndef CONFIG_H_
 #define CONFIG_H_
@@ -38,7 +38,7 @@ public:
     static const byte WATER = 11;
     static const byte BT_RX = 12;
     static const byte BT_TX = 13;
-    #endif
+#endif
 
     static constexpr byte noAnalogPins = 5;
     static constexpr float A0_FACTOR = 0.027305029;
@@ -54,5 +54,7 @@ public:
     static constexpr float A4_FACTOR = 0.01460;*/
 
     static void freeRam();
+    static bool isNum(char *word);
+
 };
 #endif /* CONFIG_H_ */

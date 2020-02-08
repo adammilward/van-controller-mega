@@ -6,8 +6,8 @@
  *      Author: Adam Milward
  */
 
-#include "../Gbl.h"
 #include "Arduino.h"
+#include "Gbl.h"
 
 #ifndef Light_h_
 #define Light_h_

@@ -5,11 +5,8 @@
  *      Author: Adam Milward
  */
 
-//#define DEBUG
-
+#define DEBUG
 #include "LightCtr.h"
-#include "Controller.h"
-#include "Gbl.h"
 
 LightCtr::controllerMode LightCtr::ctrMode = STATIC;
 uint16_t LightCtr::fadeDelay = 0;
@@ -17,57 +14,36 @@ uint32_t LightCtr::waitMillisFade = 0;
 uint8_t LightCtr::slideDelay = 100;
 uint32_t LightCtr::waitMillisSlide = 0;
 
-const char LightCtr::remoteAlias
-				[LightCtr::remoteAliasCount]
-				 [LightCtr::remoteAliasLength]
-		  PROGMEM = {
-		{"up"},   {"down"},   {"on"},   {"off"},
-		{"red"},   {"green"},   {"blue"},   {"white"},
-		{"orange"},   {"yellow"},   {"cyan"},   {"purple"},
-		{"j1"},   {"j2"},   {"j3"},   {"j4"},
-		{"m1"},  {"m2"},   {"m3"},   {"m4"}
-};
-
 const char LightCtr::oneWordCommands
 				[LightCtr::oneWordCount]
 				 [LightCtr::oneWordLength]
 				  PROGMEM = {
 					{"report"},
-					{"top"},
-					{"bottom"},
+					{"on"},
+					{"off"},
 					{"static"},
 					{"lin"},
 					{"sin"},
 					{"exp"},
-					{"sinexp"}
-};
-
-const char LightCtr::firstOfTwoCommands
-				[LightCtr::firstOfTwoCount]
-				 [LightCtr::firstOfTwoLength]
-				  PROGMEM = {
-           "all", "red", "green", "blue",
-           "lower", "upper", "delay"
-};
-
-const char LightCtr::secondOfTwoCommands
-				[LightCtr::secondOfTwoCount]
-				 [LightCtr::secondOfTwoLength]
-				  PROGMEM = {
-		{"up"}, {"down"}, {"bottom"}, {"top"}, {"off"}
-};
+					{"sinexp"},
+					{"ru"},
+					{"rd"},
+					{"bu"},
+					{"bd"},
+					{"gu"},
+					{"gd"}
+				};		
 
 const char LightCtr::wordAndFloatCommands
 				[LightCtr::wordAndFloatCount]
 				 [LightCtr::wordAndFloatLength]
 				  PROGMEM = {
-		{"report"},
-		{"all"},
-		{"red"},
-		{"green"},
-		{"blue"},
-		{"delay"}
-};
+					{"report"},
+					{"red"},
+					{"green"},
+					{"blue"},
+					{"delay"}
+				};
 
 
 LightCtr::LightCtr() {}
@@ -76,7 +52,7 @@ bool LightCtr::actionSerial(char **wordPtrs, byte wordCount){
 #ifdef DEBUG
 	Gbl::strPtr->println(F("LightCtr::actionSerial"));
 	Gbl::freeRam();
-	Gbl::strPtr->println(F("wordCount"));
+	Gbl::strPtr->print(F("wordCount "));
 	Gbl::strPtr->println(wordCount);
 #endif
 	if (0 == wordCount) {
@@ -145,17 +121,6 @@ bool LightCtr::actionOneWord(char **wordPtrs){
             return true;
         }
     }
-    i = remoteAliasCount;
-    while (i--) {
-    	// make a copy of the current one
-		char oneItem[remoteAliasLength];
-		memcpy_P (&oneItem, &remoteAlias[i], sizeof oneItem);
-    	if (strcasecmp(oneItem, *wordPtrs) == 0) {
-            (this->*actions[ctrMode][i])();
-            return true;
-        }
-    }
-    return false;
 }
 
 bool LightCtr::parseTwoWords(char **wordPtrs) {
@@ -163,10 +128,10 @@ bool LightCtr::parseTwoWords(char **wordPtrs) {
 	Gbl::strPtr->println(F("LightCtr::parseTwoWods"));
 	Gbl::freeRam();
 #endif
-	if (Controller::isNum(wordPtrs[1])) {
+	if (Gbl::isNum(wordPtrs[1])) {
         return actionWordAndFloat(wordPtrs, atoi(wordPtrs[1]));
     } else {
-        return actionTwoWords(wordPtrs);
+        Gbl::strPtr->println(F("Err: second word must be float"));
     }
 }
 
@@ -181,52 +146,6 @@ bool LightCtr::actionWordAndFloat(char **wordPtrs, float value) {
 		memcpy_P (&oneItem, &wordAndFloatCommands[i], sizeof oneItem);
         if (strcasecmp(oneItem, *wordPtrs) == 0) {
             (this->*wordAndFloatActions[i])(value);
-            return true;
-        }
-    }
-    return false;
-}
-
-bool LightCtr::actionTwoWords(char **wordPtrs) {
-#ifdef DEBUG
-	Gbl::strPtr->println(F("LightCtr::actionTwoWords"));
-	Gbl::freeRam();
-	Gbl::strPtr->println(wordPtrs[0]);
-	Gbl::strPtr->println(wordPtrs[1]);
-#endif
-	// first word
-	int i = firstOfTwoCount;
-    while (i --) {
-    	char oneItem[firstOfTwoLength];
-    	memcpy_P (&oneItem, &firstOfTwoCommands[i], sizeof oneItem);
-		//Gbl::strPtr->println(oneItem);
-        if (strcasecmp(oneItem, wordPtrs[0]) == 0) {
-
-        	//second word
-        	int j = secondOfTwoCount;
-            while (j--) {
-            	char oneItem[secondOfTwoLength];
-				memcpy_P (&oneItem, &secondOfTwoCommands[j], sizeof oneItem);
-				//Gbl::strPtr->println(oneItem);
-                if (strcasecmp(oneItem, wordPtrs[1]) == 0) {
-                    (this->*twoWordActions[i][j])();
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
-}
-
-
-bool LightCtr::actionRemote(unsigned long inValue){
-#ifdef DEBUG
-	Gbl::strPtr->println(F("LightCtr::actionRemote"));
-#endif
-    for (int i = 0; i < 20; i++) {
-        if (codes[i] == inValue) {
-            (this->*actions[ctrMode][i])();
-            Gbl::strPtr->println(i);
             return true;
         }
     }
@@ -263,9 +182,6 @@ void LightCtr::timer(unsigned long millis) {
 		onOffFade();
 		waitMillisFade = millis;
 	}
-
-
-
 }
 
 void LightCtr::setFadeSlow(byte timerMins, int8_t inShiftOp) {
@@ -446,41 +362,6 @@ void LightCtr::onOffFade(){
 #endif
 }
 
-void LightCtr::retrieveStore(colour inColour){
-    //Serial.print("retrieveStore Colour: ");
-    //Serial.println(inColour);
-    tempStore[0] = red->base;
-    tempStore[1] = green->base;
-    tempStore[2] = blue->base;
-    //Serial.print("Stored Values: ");
-    //Serial.print(colourStore[inColour][0]);    //Serial.print(colourStore[inColour][1]);
-    //Serial.println(colourStore[inColour][2]);
-    red->set(colourStore[inColour][0]);
-    green->set(colourStore[inColour][1]);
-    blue->set(colourStore[inColour][2]);
-    turnFadingOff();
-    Gbl::strPtr->println(F("lights STATIC"));
-}
-void LightCtr::storeThis(colour inColour){
-    //Serial.print("store New Colour ");
-    //Serial.println(inColour);
-    red->set(tempStore[0]);
-    green->set(tempStore[1]);
-    blue->set(tempStore[2]);
-    colourStore[inColour][0] = tempStore[0];
-    colourStore[inColour][1] = tempStore[1];
-    colourStore[inColour][2] = tempStore[2];
-    //Serial.print("Stored Values: ");
-    //Serial.print(colourStore[inColour][0]);
-    //Serial.print(colourStore[inColour][1]);
-    //Serial.println(colourStore[inColour][2]);
-}
-
-void LightCtr::allSet(float inBase) {
-    red->set((inBase * 0.11) - 0.1);
-    green->set((inBase * 0.11) - 0.1);
-    blue->set((inBase * 0.11) - 0.1);
-}
 void LightCtr::redSet(float inBase) {
     red->set((inBase * 0.11) - 0.1);
 }
@@ -491,113 +372,24 @@ void LightCtr::blueSet(float inBase) {
     blue->set((inBase * 0.11) - 0.1);
 }
 
-void LightCtr::allBot(){
-    setFadeOffQuick(1);
-}
 void LightCtr::allTop(){
     red->set(1);
     green->set(1);
     blue->set(1);
 }
-void LightCtr::redBot() { red->set(0);}
-void LightCtr::redTop() { red->set(1);}
-void LightCtr::redOff() { red->set(-1);}
-void LightCtr::greenBot() { green->set(0);}
-void LightCtr::greenTop() { green->set(1);}
-void LightCtr::greenOff() { green->set(-1);}
-void LightCtr::blueBot() { blue->set(0);}
-void LightCtr::blueTop() { blue->set(1);}
-void LightCtr::blueOff() { blue->set(-11);}
-void LightCtr::lowerBot() {
-    red->changeLower(-1, 1);
-    green->changeLower(-1, 1);
-    blue->changeLower(-1, 1);
-}
-void LightCtr::lowerTop() {
-    red->changeLower(1, 1);
-    green->changeLower(1, 1);
-    blue->changeLower(1, 1);
-}
-void LightCtr::upperBot() {
-    red->changeUpper(-1, 1);
-    green->changeUpper(-1, 1);
-    blue->changeUpper(-1, 1);
-}
-void LightCtr::upperTop() {
-    red->changeUpper(1, 1);
-    green->changeUpper(1, 1);
-    blue->changeUpper(1, 1);
-}
-void LightCtr::delayBot(){
-    slideDelay = Gbl::DELAY_MIN;
-    turnSlideOn();
-}
-void LightCtr::delayTop() {
-    slideDelay = Gbl::DELAY_MAX;
-    turnSlideOn();
-}
-void LightCtr::delaySet(float inDelay) {
-    slideDelay = (int)inDelay;
-    turnSlideOn();
-}
 
-void LightCtr::allUp(){
-    red->shift(+1);
-    green->shift(+1);
-    blue->shift(+1);
-}
-
-void LightCtr::allDown(){
-    red->shift(-1);
-    green->shift(-1);
-    blue->shift(-1);
-}
-void LightCtr::on (){ //off
-    red->set(0.5);
-    green->set(0.5);
-    blue->set(0.5);
-}
 void LightCtr::off (){ //off
 	setFadeOffQuick(1);
 }
+
 void LightCtr::redUp   () { red->shift(+1);}
 void LightCtr::greenUp () { green->shift(+1); }
 void LightCtr::blueUp () { blue->shift(+1); }
 void LightCtr::redDown() { red->shift(-1); }
 void LightCtr::greenDown() { green->shift(-1); }
 void LightCtr::blueDown() { blue->shift(-1); }
-void LightCtr::store1 () {
-    if (holdCount == 0) {
-        retrieveStore(RED);
-    } else if (holdCount == 4) {
-        storeThis(RED);
-    }
-    turnFadingOff();
-}
-void LightCtr::store2 () {
-    if (holdCount == 0) {
-        retrieveStore(GREEN);
-    } else if (holdCount == 4) {
-        storeThis(GREEN);
-    }
-    turnFadingOff();
-}
-void LightCtr::store3 () {
-    if (holdCount == 0) {
-        retrieveStore(BLUE);
-    } else if (holdCount == 4) {
-        storeThis(BLUE);
-    }
-    turnFadingOff();
-}
-void LightCtr::store4 () {
-    if (holdCount == 0) {
-        retrieveStore(WHITE);
-    } else if (holdCount == 4) {
-        storeThis(WHITE);
-    }
-    turnFadingOff();
-}
+
+
 void LightCtr::lin    () {
 	turnSlideOn();
     Light::fMode = Light::LIN;
@@ -619,49 +411,6 @@ void LightCtr::sinExp    () {
 	Gbl::strPtr->println(F("fadeMode EXPSIN"));
 }
 
-void LightCtr::red_f(){
-    red->changeLower(+1, 0.2);
-    green->changeLower(+1, 0.2);
-    blue->changeLower(+1, 0.2);
-}
-void LightCtr::orange_f (){
-    red->changeLower(-1, 0.2);
-    green->changeLower(-1, 0.2);
-    blue->changeLower(-1, 0.2);
-}
-void LightCtr::green_f (){
-    red->changeUpper(+1, 0.2);
-    green->changeUpper(+1, 0.2);
-    blue->changeUpper(+1, 0.2);
-}
-void LightCtr::yellow_f(){
-    red->changeUpper(-1, 0.2);
-    green->changeUpper(-1, 0.2);
-    blue->changeUpper(-1, 0.2);
-}
-void LightCtr::white_f(){
-	if ((int)slideDelay*4 > Gbl::DELAY_MAX) {
-		slideDelay = Gbl::DELAY_MAX;
-		red->flashHalf();
-		green->flashHalf();
-		blue->flashHalf();
-	} else {
-		slideDelay *= 4;
-	}
-    turnSlideOn();
-}
-void LightCtr::purple_f(){
-	if ((int)slideDelay / 4 < Gbl::DELAY_MIN) {
-		slideDelay = Gbl::DELAY_MIN;
-		red->flashHalf();
-		green->flashHalf();
-		blue->flashHalf();
-	} else {
-
-		slideDelay /= 4;
-	}
-    turnSlideOn();
-}
 
 void LightCtr::turnFadingOff() {
 #ifdef DEBUG
@@ -680,4 +429,50 @@ void LightCtr::turnSlideOn(){
 	if (! slideDelay) slideDelay = 100;
 	fadeDelay = 0;
 }
-void LightCtr::null(){};
+
+void LightCtr::delaySet(float inDelay) {
+    Gbl::strPtr->print("indelay float ");
+			Gbl::strPtr->println(inDelay);
+
+	Gbl::strPtr->print("uint8_t ");
+	Gbl::strPtr->println((uint8_t) inDelay);
+
+	Gbl::strPtr->print("int ");
+	Gbl::strPtr->println((int) inDelay);
+
+		Gbl::strPtr->print("byte ");
+	Gbl::strPtr->println((byte) inDelay);
+
+
+	Gbl::strPtr->print("slidedelay1 ");
+	Gbl::strPtr->println(slideDelay);
+	slideDelay = (inDelay < Gbl::DELAY_MIN) ? Gbl::DELAY_MIN :
+		(inDelay > Gbl::DELAY_MAX) ? Gbl::DELAY_MAX :
+			inDelay;
+			Gbl::strPtr->print("slidedelay2 ");
+			Gbl::strPtr->println(slideDelay);
+    turnSlideOn();
+}
+
+// //todo need to remove below this line
+// void LightCtr::lowerUp(){
+//     red->changeLower(+1, 0.2);
+//     green->changeLower(+1, 0.2);
+//     blue->changeLower(+1, 0.2);
+// }
+// void LightCtr::lowerDown (){
+//     red->changeLower(-1, 0.2);
+//     green->changeLower(-1, 0.2);
+//     blue->changeLower(-1, 0.2);
+// }
+// void LightCtr::upperUp (){
+//     red->changeUpper(+1, 0.2);
+//     green->changeUpper(+1, 0.2);
+//     blue->changeUpper(+1, 0.2);
+// }
+// void LightCtr::upperDown (){
+//     red->changeUpper(-1, 0.2);
+//     green->changeUpper(-1, 0.2);
+//     blue->changeUpper(-1, 0.2);
+// }
+

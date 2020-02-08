@@ -6,11 +6,6 @@
  */
 
 #include "TimeCtr.h"
-#include "Arduino.h"
-#include "Gbl.h"
-#include "Controller.h"
-#include "DS3231.h"
-#include "EepAnything.h"
 
 //#define DEBUG
 
@@ -59,7 +54,7 @@ bool TimeCtr::actionSerial(char **wordPtrs, byte wordCount) {
 	if (0 == wordCount) {
 		return true;
 	}else if (strcasecmp(wordPtrs[0], "report") == 0) {
-        if (wordCount == 2 && Controller::isNum(wordPtrs[1])) {
+        if (wordCount == 2 && Gbl::isNum(wordPtrs[1])) {
 			setReportDelay(atoi(wordPtrs[1]));
 		}
 		report();
@@ -280,7 +275,7 @@ bool TimeCtr::setDay(char **wordPtrs, byte wordCount) {
 	}
 #endif
 
-	if (1 == wordCount && Controller::isNum(wordPtrs[0])) {
+	if (1 == wordCount && Gbl::isNum(wordPtrs[0])) {
 		clock->setDOW(atoi(wordPtrs[0]));
 	} else {
 		return false;
@@ -294,9 +289,9 @@ bool TimeCtr::setDate(char **wordPtrs, byte wordCount) {
 	Gbl::strPtr->println(F("setDate"));
 	if (
 		wordCount == 3
-		&& Controller::isNum(wordPtrs[0])
-		&& Controller::isNum(wordPtrs[1])
-		&& Controller::isNum(wordPtrs[2])
+		&& Gbl::isNum(wordPtrs[0])
+		&& Gbl::isNum(wordPtrs[1])
+		&& Gbl::isNum(wordPtrs[2])
 	) {
 		clock->setDate(atoi(wordPtrs[0]), atoi(wordPtrs[1]), atoi(wordPtrs[2]));
 		Gbl::strPtr->print(F("date set to: "));
@@ -310,9 +305,9 @@ bool TimeCtr::setTime(char **wordPtrs, byte wordCount) {
 	Gbl::strPtr->println(F("setTime"));
 	if (
 		wordCount == 3
-		&& Controller::isNum(wordPtrs[0])
-		&& Controller::isNum(wordPtrs[1])
-		&& Controller::isNum(wordPtrs[2])
+		&& Gbl::isNum(wordPtrs[0])
+		&& Gbl::isNum(wordPtrs[1])
+		&& Gbl::isNum(wordPtrs[2])
 	) {
 		clock->setTime(atoi(wordPtrs[0]), atoi(wordPtrs[1]), atoi(wordPtrs[2]));
 		Gbl::strPtr->print(F("time set to: "));
@@ -411,7 +406,7 @@ void TimeCtr::utilityReport(Utility &util) {
 bool TimeCtr::utilitySetOn(Utility& util, char** wordPtrs, byte wordCount) {
 	if (!wordCount) {
 		utilActivateTimerOn(util, util.alarm.timerMins, clock->getUnixTime(clock->getTime()));
-	} else if (1 == wordCount && Controller::isNum(wordPtrs[0])) {
+	} else if (1 == wordCount && Gbl::isNum(wordPtrs[0])) {
 		utilActivateTimerOn(util, atoi(wordPtrs[0]), clock->getUnixTime(clock->getTime()));
 	} else {
 		return false;
@@ -425,7 +420,7 @@ bool TimeCtr::utilitySetOff(Utility& util, char** wordPtrs, byte wordCount) {
 #endif
 	if (!wordCount) {
 		utilOff(util);
-	} else if (1 == wordCount && Controller::isNum(wordPtrs[0])) {
+	} else if (1 == wordCount && Gbl::isNum(wordPtrs[0])) {
 		utilActivateTimerOff(util, atoi(wordPtrs[0]), clock->getUnixTime(clock->getTime()));
 	} else {
 		return false;
@@ -469,8 +464,8 @@ bool TimeCtr::utilitySetAlarm(Utility& util, char** wordPtrs, byte wordCount) {
 			retVal = true;
 		}
 	} else if (wordCount >= 2) {
-		if (Controller::isNum(wordPtrs[0])
-			&& Controller::isNum(wordPtrs[1]))
+		if (Gbl::isNum(wordPtrs[0])
+			&& Gbl::isNum(wordPtrs[1]))
 		{
 			if (2 == wordCount) {
 				retVal = utilityConfigAlarm(
@@ -478,7 +473,7 @@ bool TimeCtr::utilitySetAlarm(Utility& util, char** wordPtrs, byte wordCount) {
 					atoi(wordPtrs[0]),
 					atoi(wordPtrs[1])
 				);
-			} else if (3 == wordCount && Controller::isNum(wordPtrs[2])) {
+			} else if (3 == wordCount && Gbl::isNum(wordPtrs[2])) {
 				retVal = utilityConfigAlarm(
 					util,
 					atoi(wordPtrs[0]),

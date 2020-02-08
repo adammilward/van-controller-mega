@@ -96,7 +96,7 @@ private:
     const static byte firstOfTwoLength = 6;
     static const char firstOfTwoCommands[firstOfTwoCount][firstOfTwoLength];
 
-    const static byte wordAndFloatCount = 5;
+    const static byte wordAndFloatCount = 7;
     const static byte wordAndFloatLength = 7;
     static const char wordAndFloatCommands[wordAndFloatCount][wordAndFloatLength];
 
@@ -106,6 +106,8 @@ private:
             &LightCtr::greenSet,
             &LightCtr::blueSet,
             &LightCtr::delaySet,
+            &LightCtr::upperSet,
+            &LightCtr::lowerSet,
     };
 
     void allTop();

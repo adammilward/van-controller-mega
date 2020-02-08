@@ -42,7 +42,9 @@ const char LightCtr::wordAndFloatCommands
 					{"red"},
 					{"green"},
 					{"blue"},
-					{"delay"}
+					{"delay"},
+					{"upper"},
+					{"lower"}
 				};
 
 
@@ -129,7 +131,7 @@ bool LightCtr::parseTwoWords(char **wordPtrs) {
 	Gbl::freeRam();
 #endif
 	if (Gbl::isNum(wordPtrs[1])) {
-        return actionWordAndFloat(wordPtrs, atoi(wordPtrs[1]));
+        return actionWordAndFloat(wordPtrs, atof(wordPtrs[1]));
     } else {
         Gbl::strPtr->println(F("Err: second word must be float"));
     }
@@ -363,13 +365,15 @@ void LightCtr::onOffFade(){
 }
 
 void LightCtr::redSet(float inBase) {
-    red->set((inBase * 0.11) - 0.1);
+	Gbl::strPtr->println("red inBase");
+	Gbl::strPtr->println(inBase);
+    red->set((inBase * 0.0101) - 0.01);
 }
 void LightCtr::greenSet(float inBase) {
-    green->set((inBase * 0.11) - 0.1);
+    green->set((inBase * 0.0101) - 0.01);
 }
 void LightCtr::blueSet(float inBase) {
-    blue->set((inBase * 0.11) - 0.1);
+    blue->set((inBase * 0.0101) - 0.01);
 }
 
 void LightCtr::allTop(){
@@ -431,27 +435,24 @@ void LightCtr::turnSlideOn(){
 }
 
 void LightCtr::delaySet(float inDelay) {
-    Gbl::strPtr->print("indelay float ");
-			Gbl::strPtr->println(inDelay);
-
-	Gbl::strPtr->print("uint8_t ");
-	Gbl::strPtr->println((uint8_t) inDelay);
-
-	Gbl::strPtr->print("int ");
-	Gbl::strPtr->println((int) inDelay);
-
-		Gbl::strPtr->print("byte ");
-	Gbl::strPtr->println((byte) inDelay);
-
-
-	Gbl::strPtr->print("slidedelay1 ");
-	Gbl::strPtr->println(slideDelay);
 	slideDelay = (inDelay < Gbl::DELAY_MIN) ? Gbl::DELAY_MIN :
 		(inDelay > Gbl::DELAY_MAX) ? Gbl::DELAY_MAX :
 			inDelay;
-			Gbl::strPtr->print("slidedelay2 ");
-			Gbl::strPtr->println(slideDelay);
     turnSlideOn();
+}
+
+ void LightCtr::upperSet(float upper) {
+     red->setUpper(upper);
+     green->setUpper(upper);
+     blue->setUpper(upper);
+}
+
+void LightCtr::lowerSet(float lower) {
+		Gbl::strPtr->print("lower is ");
+	Gbl::strPtr->print(lower);
+    red->setLower(lower);
+    green->setLower(lower);
+    blue->setLower(lower);
 }
 
 // //todo need to remove below this line

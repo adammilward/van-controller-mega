@@ -18,8 +18,8 @@ Light::Light(
         byte ID,
 		float inGain,
 		float inLower,
-		float inUpper)
-{
+		float inUpper
+) {
     pin = inPin;            // sets the pin
     pinMode(pin, OUTPUT);
 	id = ID;
@@ -171,6 +171,7 @@ void Light::calcPow() {
     Serial.print(lower);
     Serial.println("    ");*/
 
+	// half the power of the green and blue lights
 	if (id != 0) {
 	    power = power * 0.5 + 0.5;
 	}
@@ -187,14 +188,8 @@ float Light::randomize() {
     // 0.001 to 0.008
     return random(2, 20)/10000.0;
 }
-// called when resetting fade
-// sets the base to half, calculates the power of lights
-// and writes to pin
-void Light::toHalf() {
-    base = 0.5;
-    calcPow();
-    analogWrite(pin, (power));
-}
+
+
 void Light::flashOff(){
     digitalWrite(pin, LOW);
     delay(20);
@@ -210,6 +205,24 @@ void Light::flashOn(){
     delay(20);
     analogWrite(pin, power);
 }
+
+void Light::setUpper(float inUpper) {
+	range = ((inUpper * 2.55) - lower) / 255;
+	range = (range < 0.01) ? 0.01 : range;
+	range = (range > 1) ? 1 : range;
+}
+
+// input 0 to 100, output 0 to 230
+void Light::setLower(float inLower) {
+	Gbl::strPtr->print("in lower is ");
+	Gbl::strPtr->println(inLower);
+	
+	lower = (inLower > 90) ? 90 * 2.55 : inLower * 2.55;
+	setUpper(lower + range * 255);
+	Gbl::strPtr->print(" lower is ");
+	Gbl::strPtr->println(lower);
+}
+
 void Light::changeLower(char op, float change) {
     /*Serial.println();
     Serial.println();

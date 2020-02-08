@@ -30,7 +30,7 @@ public:
 	float base;     // the base value  base <1, for deriving power <0 is off
 	int power;      // led Power 1 to 255 derived from base
     float gain;         // for fading the lights <= 0.002
-    float lower;        // lower limit 1 to 255
+    uint8_t lower;        // lower limit 1 to 255
     float range;        // range/multiplier 0 to
 	int8_t shiftOp = 1;    // 1 or -1  controls the direction of shift
 
@@ -38,12 +38,14 @@ public:
 	void set(float setBase, bool flash = false);
 	void slide();
 	void fade();
-	void toHalf();
 	void changeLower(char op, float change = 0.2);
 	void changeUpper(char op, float change = 0.2);
 	void flashOff();
 	void flashHalf();
 	void flashOn();
+
+	void setUpper(float);
+	void setLower(float);
 
 private:
 

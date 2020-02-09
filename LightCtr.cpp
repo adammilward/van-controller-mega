@@ -208,8 +208,8 @@ void LightCtr::setFadeOffQuick(byte delayMillis) {
 
 void LightCtr::report() {
 	Gbl::strPtr->println(F("<{"));
-	Gbl::strPtr->print(F(" 'mode': 'lights"));
-	Gbl::strPtr->print(F(" 'r': "));
+	Gbl::strPtr->println(F(" 'mode': 'lights'"));
+	Gbl::strPtr->print(F(",'r': "));
     Gbl::strPtr->println(red->base * 100);
 	Gbl::strPtr->print(F(",'g': "));
     Gbl::strPtr->println(green->base * 100);
@@ -221,21 +221,24 @@ void LightCtr::report() {
 	Gbl::strPtr->print(F(",'u': "));
     Gbl::strPtr->println(red->lower / 2.55 + red->range * 100);
 
-	Gbl::strPtr->print(F(", 'lightMode': "));
+	Gbl::strPtr->print(F(",'lightMode': "));
 	Gbl::strPtr->print(F("["));
 	Gbl::strPtr->print(ctrMode);
 	Gbl::strPtr->print(F(","));
 	Gbl::strPtr->print(Light::fMode);
 	Gbl::strPtr->println(F("]"));
 
-	Gbl::strPtr->print(F(",slideDelay: "));
+	Gbl::strPtr->print(F(",'slideDelay': "));
 	Gbl::strPtr->println(slideDelay);
-	Gbl::strPtr->print(F(",fadeDelay: "));
+	Gbl::strPtr->print(F(",'fadeDelay': "));
 	Gbl::strPtr->println(fadeDelay);
-    Gbl::strPtr->print(F(",reportDelay: "));
+    Gbl::strPtr->print(F(",'reportDelay': "));
     Gbl::strPtr->println(reportDelaySec * 1000);
 	Gbl::strPtr->println(F("}>"));
     
+	Gbl::strPtr->println("<{'a': 1, 'b': {'c': 2}}>");
+	Gbl::strPtr->println("<{'a': 1, 'b': {'c': 2}}>");
+
 	// Gbl::strPtr->print(F("Red      base: "));
     // Gbl::strPtr->print(red->base * 100);
     // Gbl::strPtr->print(F("  power: "));

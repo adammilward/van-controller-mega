@@ -86,10 +86,6 @@ void Light::set(float setBase, bool flash) {
 		//Serial.println(setBase);
 		analogWrite(pin, (power));
 	}
-//	 Gbl::strPtr->print(F("base= "));
-//     Gbl::strPtr->println(base);
-//	 Gbl::strPtr->print(F("power= "));
-//     Gbl::strPtr->println(power);
 }
 
 // change power of light automatically
@@ -214,13 +210,8 @@ void Light::setUpper(float inUpper) {
 
 // input 0 to 100, output 0 to 230
 void Light::setLower(float inLower) {
-	Gbl::strPtr->print("in lower is ");
-	Gbl::strPtr->println(inLower);
-	
 	lower = (inLower > 90) ? 90 * 2.55 : inLower * 2.55;
 	setUpper(lower + range * 255);
-	Gbl::strPtr->print(" lower is ");
-	Gbl::strPtr->println(lower);
 }
 
 void Light::changeLower(char op, float change) {
@@ -250,11 +241,6 @@ void Light::changeLower(char op, float change) {
     lower = tempLower * 254 + 1;
     base = 0;
     flashOff();
-
-/*     Gbl::strPtr->print(F("upper= "));
-     Gbl::strPtr->println(tempUpper);
-     Gbl::strPtr->print(F("lower= "));
-     Gbl::strPtr->println(tempLower);*/
 }
 /**
  * range from 0.2 to 1 increments of 0.2
@@ -287,11 +273,6 @@ void Light::changeUpper(char op, float change) {
     lower = tempLower * 254 + 1;
     base = 1;
     flashOff();
-
-/*     Gbl::strPtr->print(F("upper= "));
-     Gbl::strPtr->println((tempUpper));
-     Gbl::strPtr->print(F("lower= "));
-     Gbl::strPtr->println((tempLower));*/
 }
 
 

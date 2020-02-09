@@ -16,8 +16,8 @@ class Gbl {
 public:
 
 	static Stream *strPtr;
-
-
+    
+    static const uint32_t BAUD = 57600;
 
     static const byte DELAY_MIN = 1;
     static const byte DELAY_MAX = 255;

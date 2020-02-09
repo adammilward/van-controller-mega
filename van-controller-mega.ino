@@ -5,8 +5,6 @@
 #include "Gbl.h"
 #include "LightCtr.h"
 
-
-
 Controller masterCtr;      // handles the remotes
 Stream *Gbl::strPtr = &Serial;
 
@@ -41,15 +39,15 @@ DS3231* TimeCtr::clock = &Clock;
 void setup()
 {
 	// Setup Serial connection
-	Serial.begin(115200);
+	Serial.begin(Gbl::BAUD);
 #ifdef MEGA
-	Serial3.begin(115200);
+	Serial3.begin(Gbl::BAUD);
 #endif
 #ifdef BTUNO
-	BT.begin(115200); // RX,TX
+	BT.begin(Gbl::BAUD); // RX,TX
 #endif
 #ifdef PI_UNO
-	piSerial.begin(115200); // RX,TX
+	piSerial.begin(Gbl::BAUD); // RX,TX
 #endif
 #ifdef TME
 	Clock.begin();

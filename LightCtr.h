@@ -55,7 +55,6 @@ private:
 
     void help();
 
-
     bool actionOneWord(char **);
     bool actionTwoWords(char **);
     bool parseTwoWords(char **);
@@ -76,7 +75,7 @@ private:
     static const char oneWordCommands[oneWordCount][oneWordLength];
 
     PTR oneWordActions[oneWordCount]{
-        &LightCtr::report,
+        &LightCtr::stopReport,
         &LightCtr::allTop,
         &LightCtr::off,
         &LightCtr::turnFadingOff,
@@ -110,6 +109,7 @@ private:
             &LightCtr::lowerSet,
     };
 
+    void stopReport();
     void allTop();
     void off();
     void turnFadingOff();

@@ -5,16 +5,12 @@
  *  Created on: 20 Feb 2017
  *      Author: Adam Milward
  */
-#define DEBUG
+//#define DEBUG
 #include "Controller.h"
-
 
 //#define STAT
 #define LTS
 //#define TME
-
-
-
 
 Controller::Controller() {
     // setup for reading commands
@@ -46,16 +42,10 @@ void Controller::timer(unsigned long millis) {
 
 void Controller::serialReceive() {
 #ifdef DEBUG
-	Gbl::strPtr->println(F("serialRecieve"));
+	Serial.println(F("serialRecieve"));
 	Gbl::freeRam();
 #endif
-	if (serialGetCommand()) {
-		Gbl::strPtr->println("serialRead read full command");
-		Gbl::strPtr->println("letter at start of last word");
-		Gbl::strPtr->println(wordPtrs[wordCount - 1]);
-		Gbl::strPtr->println(wordPtrs[wordCount - 1][0]);
-		Gbl::strPtr->println((byte)wordPtrs[wordCount - 1][0]);
-		
+	if (serialGetCommand()) {	
 		if ('\0' == wordPtrs[wordCount - 1][0]) {
 			wordCount --;
 		}
@@ -72,54 +62,52 @@ void Controller::serialReceive() {
 			}
 		}
 
-		Gbl::strPtr->println(F("---------string was terminated---------"));
-		Gbl::strPtr->print(F("wordCoutnt: "));
-		Gbl::strPtr->println(wordCount);
-		Gbl::strPtr->print(F("commandLength: "));
-		Gbl::strPtr->println(dataArrLength);
-		for(byte j = 0; j <= wordCount-1; j++) {
-			Gbl::strPtr->println(j);
-			Gbl::strPtr->println(wordPtrs[j]);
-		}
+		#ifdef DEBUG
+			Serial.println(F("---------string was terminated---------"));
+			Serial.print(F("wordCoutnt: "));
+			Serial.println(wordCount);
+			Serial.print(F("commandLength: "));
+			Serial.println(dataArrLength);
+			for(byte j = 0; j <= wordCount-1; j++) {
+				Serial.println(j);
+				Serial.println(wordPtrs[j]);
+			}
+		#endif
 		wordCount = 1;
 		wordPtrs[0] = dataArr;
 		dataArrLength = 0;
 	}
 
-	Gbl::strPtr->println(F("---------state of string after read---------"));
-	Gbl::strPtr->print(F("wordCoutnt: "));
-	Gbl::strPtr->println(wordCount);
-	Gbl::strPtr->print(F("commandLength: "));
-	Gbl::strPtr->println(dataArrLength);
-	for(byte j = 0; j <= wordCount-1; j++) {
-			Gbl::strPtr->println(j);
-			Gbl::strPtr->println(wordPtrs[j]);
-		}
-	Gbl::strPtr->println("********************end serialRead******");	
+	#ifdef DEBUG
+		Serial.println(F("---------state of string after read---------"));
+		Serial.print(F("wordCoutnt: "));
+		Serial.println(wordCount);
+		Serial.print(F("commandLength: "));
+		Serial.println(dataArrLength);
+		for(byte j = 0; j <= wordCount-1; j++) {
+				Serial.println(j);
+				Serial.println(wordPtrs[j]);
+			}
+		Serial.println("********************end serialRead******");
+	#endif
 }
 
 bool Controller::serialGetCommand() {
 #ifdef DEBUG
-	Gbl::strPtr->println(F("serialRead"));
+	Serial.println(F("serialGetCommand"));
 	//Gbl::freeRam();
 #endif
-
 	char newChar = Gbl::strPtr->read();
-
 	switch (newChar) {
 		case '\r':
 		case '\n':
-			Gbl::strPtr->println(F("found terminator"));
 			terminateCommand();
 			return true;
 		case '\0':
 		case ' ':
-		 	Gbl::strPtr->println(F("found space"));	
 			addSpace();
 			return false;
 		default:
-		 	Gbl::strPtr->print(F("found: "));	
-		 	Gbl::strPtr->print(newChar);
 			addChar(newChar);
 			return false;	
 	}
@@ -130,8 +118,6 @@ void Controller::addChar(char newChar) {
 }
 
 void Controller::addSpace() {
-	Gbl::strPtr->println(dataArr[dataArrLength]);
-	Gbl::strPtr->println((byte) dataArr[dataArrLength - 1]);
 	if ('\0' != dataArr[dataArrLength - 1]) {
 		dataArr[dataArrLength ++] = '\0';
 		// set following position to null, so next word is null (unless char is recieved);
@@ -145,95 +131,7 @@ void Controller::terminateCommand() {
 	dataArr[dataArrLength ++] = '\0';
 }
 
-// 	Gbl::strPtr->print("totalLenght: ");
-// 	Gbl::strPtr->println(totalLength);
-// 	int i = 0;
-// 	while (i < newLength) {
-// 			Gbl::strPtr->print("recieved: ");
-// 			Gbl::strPtr->print(dataAr[i]);
-// 			Gbl::strPtr->print(" - ");
-// 			Gbl::strPtr->println((byte) dataAr[i ++]);
-// 	}
-
-
-
-// 	if ('\r' != dataAr[totalLength -1]
-// 		|| '\n' != dataAr[totalLength -1])
-// 	{
-// 		Gbl::strPtr->println("command finished");
-// 	} else {
-// 		Gbl::strPtr->println("command not finished");
-// 	}
-
-// 	if (! checkForRepeat(dataAr)) {
-		
-// 		// set the space Flag to true, this it the first input
-// 		// to record the start of the first word
-// 		bool spaceFlag = (! prevDataLength);
-// 		for(byte i = prevDataLength; i < (totalLength); i++ ) {
-// 			// loop, set all spaces to null terminator recording into data member
-// 			prevDataAr[i] = dataAr[i - prevDataLength];
-// 			// record the position of each word
-// 			Gbl::strPtr->print(F("dataAr at position i: "));
-// 			Gbl::strPtr->println(prevDataAr[i]);
-// 			if (prevDataAr[i] == ' ' || prevDataAr[i] == '\0' || wordCount == maxWords+1) {
-// 				prevDataAr[i] = '\0';
-// 				spaceFlag = true;
-// 				Gbl::strPtr->println("found Space");
-// 			} else if ('\r' == prevDataAr[i]
-// 				|| '\n' == prevDataAr[i]
-// 			) {
-// 				prevDataAr[i] = '\0';
-// 				spaceFlag = true;
-// 				prevDataLength = 0;
-// 				commandTerminated = true;
-// 				Gbl::strPtr->println("command terminated");
-// 				Gbl::strPtr->println("found return");
-// 			} else if (spaceFlag == true) {
-// 				wordPtrs[wordCount] = prevDataAr + i;
-// 				spaceFlag = false;
-// 				wordCount++;
-// 				Gbl::strPtr->print("space flag new word: ");
-// 				Gbl::strPtr->println(wordCount);
-// 			}
-// 		}
-// 		// can have no more than 5 words
-// 		if (wordCount > maxWords) wordCount = maxWords;
-// 	} else {
-// 		return true;
-// 	}
-// #ifdef DEBUG
-// 		Gbl::strPtr->print(F("wordCoutnt: "));
-// 		Gbl::strPtr->println(wordCount);
-// 		Gbl::strPtr->print(F("commandLength: "));
-// 		Gbl::strPtr->println(totalLength);
-// 		for(byte j = 0; j <= wordCount-1; j++) {
-// 			Gbl::strPtr->println(j);
-// 			Gbl::strPtr->println(wordPtrs[j]);
-// 		}
-// #endif
-// 	prevDataLength = totalLength;
-// 	return commandTerminated;
-
-
-bool Controller::checkForRepeat(char *dataAr)  {
-#ifdef DEBUG
-	Gbl::strPtr->println(F("checkForRepeat"));
-	Gbl::freeRam();
-#endif
-	if ('\0' == dataAr[0] || '\r' == dataAr[0] || '\n' == dataAr[0]) {
-		Gbl::strPtr->println(F("repeat true"));
-        return true;
-    }
-		Gbl::strPtr->println(F("reoeat false"));
-    return false;
-}
-
 bool Controller::checkForMode()  {
-#ifdef DEBUG
-    Gbl::strPtr->println(F("checkForMode"));
-	Gbl::freeRam();
-#endif
 	if (
 		strcasecmp(wordPtrs[0], "l") == 0
 		|| strcasecmp(wordPtrs[0], "lights") == 0)
@@ -268,9 +166,6 @@ void Controller::outputMode() {
 	case STATUS:
 		Gbl::strPtr->print(F("STATUS Mode"));
 		break;
-	//case COM:
-		//Gbl::strPtr->print(F("COM Mode"));
-		//break;
 	case CLOCK:
 		Gbl::strPtr->print(F("CLOCK Mode"));
 		break;
@@ -278,59 +173,19 @@ void Controller::outputMode() {
 }
 
 bool Controller::processSerial(byte firstWord) {
-#ifdef DEBUG
-	Gbl::strPtr->print(F("processSerial "));
-	Gbl::freeRam();
-#endif
     switch (mode) {
-#ifdef LTS
-    case LIGHTS:
-        return lightCtr.actionSerial(&wordPtrs[firstWord], wordCount-firstWord);
-#endif
-#ifdef STAT
-    case STATUS:
-        return statusCtr.actionSerial(&wordPtrs[firstWord], wordCount-firstWord);
-#endif
-#ifdef TME
-    case CLOCK:
-        return timeCtr.actionSerial(&wordPtrs[firstWord], wordCount-firstWord);
-#endif
+		#ifdef LTS
+			case LIGHTS:
+				return lightCtr.actionSerial(&wordPtrs[firstWord], wordCount-firstWord);
+		#endif
+		#ifdef STAT
+			case STATUS:
+				return statusCtr.actionSerial(&wordPtrs[firstWord], wordCount-firstWord);
+		#endif
+		#ifdef TME
+			case CLOCK:
+				return timeCtr.actionSerial(&wordPtrs[firstWord], wordCount-firstWord);
+		#endif
     }
         return false;
 }
-
-
-void Controller::irReceive(unsigned long inValue){
-    static int hCount;
-    if (inValue == IR_HOLD) {
-        hCount++;
-        irDecode(storedCode, hCount);
-    } else {
-        hCount = 0;
-        irDecode(inValue, hCount);
-    }
-    delay(200);
-}
-
-#ifdef IR
-void Controller::irDecode(unsigned long inValue, int inHCount){
-    bool actioned = false;
-    switch (iRMode){
-        case IR_LIGHTS:
-            lightCtr.holdCount = inHCount;
-            actioned = lightCtr.actionRemote(inValue);
-            break;
-        case IR_MP3:
-            //MP3Remote.holdCount = inHCount;
-            actioned = lightCtr.actionRemote(inValue);
-            break;
-    }
-    if (true == actioned) {
-        storedCode = inValue;
-    } else {
-    	Gbl::strPtr->print(inValue, HEX);
-        storedCode = 0;
-    }
-}
-#endif
-

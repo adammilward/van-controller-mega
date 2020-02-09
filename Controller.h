@@ -28,8 +28,6 @@ public:
     //StatusCtr statusCtr;
 
 private:
-
-
     //StatusCtr statusCtr;
     //LightCtr lightCtr;
 
@@ -41,12 +39,18 @@ private:
     unsigned long int storedCode = 0;  // for sending when hold is pressed
 
     static constexpr byte maxLetters = 30;
-    char prevDataAr[maxLetters];
+    char dataArr[maxLetters];
+    byte dataArrLength = 0;
+
     static constexpr byte maxWords = 7;
     char *wordPtrs[maxWords];
     byte wordCount = 0;
 
-    void serialRead();
+    bool serialGetCommand();
+    void addChar(char);
+    void addSpace();
+    void terminateCommand();
+
     bool checkForRepeat(char *);
     bool processSerial(byte);
     bool checkForMode();

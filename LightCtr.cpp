@@ -207,7 +207,8 @@ void LightCtr::setFadeOffQuick(byte delayMillis) {
 }
 
 void LightCtr::report() {
-	Gbl::strPtr->println(F("{"));
+	Gbl::strPtr->println(F("<{"));
+	Gbl::strPtr->print(F(" 'mode': 'lights"));
 	Gbl::strPtr->print(F(" 'r': "));
     Gbl::strPtr->println(red->base * 100);
 	Gbl::strPtr->print(F(",'g': "));
@@ -220,7 +221,7 @@ void LightCtr::report() {
 	Gbl::strPtr->print(F(",'u': "));
     Gbl::strPtr->println(red->lower / 2.55 + red->range * 100);
 
-	Gbl::strPtr->print(F(", 'mode': "));
+	Gbl::strPtr->print(F(", 'lightMode': "));
 	Gbl::strPtr->print(F("["));
 	Gbl::strPtr->print(ctrMode);
 	Gbl::strPtr->print(F(","));
@@ -233,8 +234,7 @@ void LightCtr::report() {
 	Gbl::strPtr->println(fadeDelay);
     Gbl::strPtr->print(F(",reportDelay: "));
     Gbl::strPtr->println(reportDelaySec * 1000);
-	Gbl::strPtr->println(F("}"));
-
+	Gbl::strPtr->println(F("}>"));
     
 	// Gbl::strPtr->print(F("Red      base: "));
     // Gbl::strPtr->print(red->base * 100);

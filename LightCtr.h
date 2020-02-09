@@ -132,6 +132,5 @@ private:
     void delaySet(float);
     void upperSet(float);
     void lowerSet(float);
-
 };
 #endif /* LightCtr_H_ */

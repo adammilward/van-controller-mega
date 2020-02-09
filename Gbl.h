@@ -55,6 +55,5 @@ public:
 
     static void freeRam();
     static bool isNum(char *word);
-
 };
 #endif /* CONFIG_H_ */

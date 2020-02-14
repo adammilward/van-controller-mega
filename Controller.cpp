@@ -8,9 +8,17 @@
 //#define DEBUG
 #include "Controller.h"
 
-//#define STAT
 #define LTS
-//#define TME
+#define STAT
+#define TME
+
+#ifdef TME
+	#include "TimeCtr.h"
+#endif
+
+#ifdef STAT
+	#include "StatusCtr.h"
+#endif
 
 Controller::Controller() {
     // setup for reading commands
@@ -76,8 +84,7 @@ void Controller::serialReceive() {
 		wordCount = 1;
 		wordPtrs[0] = dataArr;
 		dataArrLength = 0;
-	}
-
+	} else {
 	#ifdef DEBUG
 		Serial.println(F("---------state of string after read---------"));
 		Serial.print(F("wordCoutnt: "));
@@ -90,14 +97,17 @@ void Controller::serialReceive() {
 			}
 		Serial.println("********************end serialRead******");
 	#endif
+	}
 }
 
 bool Controller::serialGetCommand() {
-#ifdef DEBUG
-	Serial.println(F("serialGetCommand"));
-	//Gbl::freeRam();
-#endif
 	char newChar = Gbl::strPtr->read();
+	#ifdef DEBUG
+		Serial.println(F("serialGetCommand got char "));
+		Serial.print(newChar);
+		Serial.print(F(" - "));
+		Serial.println((byte)newChar);
+	#endif
 	switch (newChar) {
 		case '\r':
 		case '\n':

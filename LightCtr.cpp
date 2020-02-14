@@ -39,12 +39,12 @@ const char LightCtr::wordAndFloatCommands
 				 [LightCtr::wordAndFloatLength]
 				  PROGMEM = {
 					{"report"},
-					{"red"},
-					{"green"},
-					{"blue"},
+					{"r"},
+					{"g"},
+					{"b"},
 					{"delay"},
-					{"upper"},
-					{"lower"}
+					{"u"},
+					{"l"}
 				};
 
 
@@ -69,7 +69,8 @@ bool LightCtr::actionSerial(char **wordPtrs, byte wordCount){
 }
 
 void LightCtr::help() {
-    Gbl::strPtr->println(F("<err>"));
+	Gbl::strPtr->println(F("<{'mode': 'lights', 'err': 'command not recognised'}>"));
+	Gbl::strPtr->println(F("Command not recognised, options are:"));
 	Gbl::strPtr->println(F("Command not recognised, options are:"));
     Gbl::strPtr->println(F("- Single Word Commands "));
     int i = oneWordCount;
@@ -89,7 +90,6 @@ void LightCtr::help() {
     	Gbl::strPtr->println(F(" [nn]"));
     }
     Gbl::strPtr->println(F("eg. 'report 10';"));
-	Gbl::strPtr->println(F("</err>"));
 }
 
 bool LightCtr::actionOneWord(char **wordPtrs){
@@ -228,7 +228,7 @@ void LightCtr::report() {
 	Gbl::strPtr->print(Light::fMode);
 	Gbl::strPtr->println(F("]"));
 
-	Gbl::strPtr->print(F(",'slideDelay': "));
+	Gbl::strPtr->print(F(",'delay': "));
 	Gbl::strPtr->println(slideDelay);
 	Gbl::strPtr->print(F(",'fadeDelay': "));
 	Gbl::strPtr->println(fadeDelay);

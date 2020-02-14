@@ -5,9 +5,9 @@
  *      Author: Adam Milward
  */
 
-//#include "TimeCtr.h"
 #include "LightCtr.h"
-//#include "StatusCtr.h"
+#include "TimeCtr.h"
+#include "StatusCtr.h"
 
 #ifndef REMOTERECEIVE_H_
 #define REMOTERECEIVE_H_
@@ -24,12 +24,10 @@ public:
     static bool isNum(char* wordAr);
 
     LightCtr lightCtr;
-    //TimeCtr timeCtr;
-    //StatusCtr statusCtr;
+    TimeCtr timeCtr;
+    StatusCtr statusCtr;
 
 private:
-    //StatusCtr statusCtr;
-    //LightCtr lightCtr;
 
     enum IRMode {IR_LIGHTS, IR_MP3};
     IRMode iRMode = IR_LIGHTS;

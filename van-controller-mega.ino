@@ -28,10 +28,10 @@ Light* LightCtr::blue = &Blue;
 	SoftwareSerial piSerial = SoftwareSerial(2, 3); // RX,TX
 #endif
 
-//#define TME
+#define TME
 #ifdef TME
 #include <DS3231.h>
-//#include "TimeCtr.h"
+#include "TimeCtr.h"
 DS3231  Clock(SDA, SCL);
 DS3231* TimeCtr::clock = &Clock;
 #endif
@@ -48,11 +48,11 @@ void setup()
 #endif
 #ifdef PI_UNO
 	piSerial.begin(Gbl::BAUD); // RX,TX
+	piSerial.println(F("we are programmed to receive"));
 #endif
 #ifdef TME
 	Clock.begin();
 #endif
-	Gbl::strPtr->println(F("we are programmed to receive"));
 #ifdef MEGA
 	Gbl::strPtr = &Serial3;
 	Gbl::strPtr->println(F("we are programmed to receive"));

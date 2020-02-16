@@ -30,8 +30,8 @@ public:
 	float base;     // the base value  base <1, for deriving power <0 is off
 	int power;      // led Power 1 to 255 derived from base
     float gain;         // for fading the lights <= 0.002
-    uint8_t lower;        // lower limit 1 to 255
-    float range;        // range/multiplier 0 to
+    uint8_t lower = 1;        // lower limit 1 to 255
+    float range = 1;        // range/multiplier 0 to 
 	int8_t shiftOp = 1;    // 1 or -1  controls the direction of shift
 
 	void shift(char op, float shiftGain = DEF_GAIN);

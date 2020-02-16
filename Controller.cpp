@@ -9,8 +9,8 @@
 #include "Controller.h"
 
 #define LTS
-#define STAT
-#define TME
+//#define STAT
+//#define TME
 
 #ifdef TME
 	#include "TimeCtr.h"
@@ -142,9 +142,7 @@ void Controller::terminateCommand() {
 }
 
 bool Controller::checkForMode()  {
-	if (
-		strcasecmp(wordPtrs[0], "l") == 0
-		|| strcasecmp(wordPtrs[0], "lights") == 0)
+	if (strcasecmp(wordPtrs[0], "lights") == 0)
 	{
         mode = LIGHTS;
     } else if (
@@ -156,8 +154,7 @@ bool Controller::checkForMode()  {
 		strcasecmp(wordPtrs[0], "c") == 0
 		|| strcasecmp(wordPtrs[0], "t") == 0
 		|| strcasecmp(wordPtrs[0], "clock") == 0
-		|| strcasecmp(wordPtrs[0], "time") == 0
-    	|| strcasecmp(wordPtrs[0], "timer") == 0)
+	)
 	{
         mode = CLOCK;
     } else {

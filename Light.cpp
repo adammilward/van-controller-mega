@@ -9,7 +9,7 @@
 #include "Light.h"
 #include "Light.h"
 
-#define MYBUG
+//#define MYBUG
 
 Light::fadeMode Light::fMode = SIN;
 
@@ -24,8 +24,8 @@ Light::Light(
     pinMode(pin, OUTPUT);
 	id = ID;
     gain = (inGain == 0)? randomize(): inGain;
-	range = inUpper - inLower; // range between 0 and 1
-	lower = inLower * 254 + 1;
+	range =  254.0 / 255.0; // range between 0 and 1
+	lower = 1;
 	base = inUpper;
 	set(0.2);
 }
@@ -203,76 +203,27 @@ void Light::flashOn(){
 }
 
 void Light::setUpper(float inUpper) {
-	range = ((inUpper * 2.55) - lower) / 255;
-	range = (range < 0.01) ? 0.01 : range;
-	range = (range > 1) ? 1 : range;
+	inUpper = (inUpper > 255) ? 255 : inUpper;
+	inUpper = (inUpper < 25) ? 25 : inUpper;
+
+	range = (inUpper - lower) / 255;
+	range =  (range < 0.1) ? 0.1 : range;
+
+	lower = inUpper - range * 255;
+	lower = (lower < 1) ? 1 : lower;
 }
 
 // input 0 to 100, output 0 to 230
 void Light::setLower(float inLower) {
-	lower = (inLower > 90) ? 90 * 2.55 : inLower * 2.55;
-	setUpper(lower + range * 255);
+	
+	float upper = lower + range * 255;
+
+	inLower = (inLower > 0.9 * 255) ? 0.9 * 255 : inLower;
+	inLower = (inLower < 1) ? 1 : inLower;
+
+	range = (upper - inLower) / 255;
+	range =  (range < 0.1) ? 0.1 : range;
+	range =  (inLower + range * 255 > 255) ? (255 - inLower) / 255 : range;
+
+	lower = inLower;
 }
-
-void Light::changeLower(char op, float change) {
-    /*Serial.println();
-    Serial.println();
-    Serial.print("lower: ");
-    Serial.println(lower);
-    Serial.print("range: ");
-    Serial.println(range);
-    Serial.println();*/
-
-    float tempLower = (lower - 1) /  254;
-    float tempUpper = range + tempLower;
-
-    tempLower = tempLower + (op * change);
-    if (tempLower < 0 ) {
-        tempLower = 0;
-        flashHalf();
-    } else if (tempLower > 0.6) {
-        tempLower = 0.6;
-        flashOn();
-    }
-    if (tempUpper - tempLower < 0.2) {
-        tempUpper = tempLower + 0.2;
-    }
-    range = tempUpper - tempLower; // range between 0 and 1
-    lower = tempLower * 254 + 1;
-    base = 0;
-    flashOff();
-}
-/**
- * range from 0.2 to 1 increments of 0.2
- */
-void Light::changeUpper(char op, float change) {
-   /* Serial.println();
-    Serial.println();
-    Serial.print("lower: ");
-    Serial.println(lower);
-    Serial.print("range: ");
-    Serial.println(range);
-    Serial.println();*/
-
-    float tempLower = (lower - 1) /  254;
-    float tempUpper = range + tempLower;
-
-    tempUpper = tempUpper + (op * change);
-
-    if (tempUpper > 1 ) {
-        tempUpper = 1;
-        flashOn();
-    } else if (tempUpper < 0.2) {
-        tempUpper = 0.2;
-    }
-    if (tempUpper - tempLower < 0.2) {
-        tempLower = tempUpper - 0.2;
-        flashHalf();
-    }
-    range = tempUpper - tempLower; // range between 0 and 1
-    lower = tempLower * 254 + 1;
-    base = 1;
-    flashOff();
-}
-
-

@@ -1,4 +1,3 @@
-//#define DEBUG
 
 #include "Arduino.h"
 #include "Controller.h"
@@ -15,11 +14,14 @@ Light* LightCtr::red = &Red;
 Light* LightCtr::green = &Green;
 Light* LightCtr::blue = &Blue;
 
+//#define DEBUG
+
 //#define MEGA
 //#define BTUNO
+
 #ifdef BTUNO
-	#include "SoftwareSerial.h"
-	SoftwareSerial BT = SoftwareSerial(12, 13); // RX,TX
+#include "SoftwareSerial.h"
+SoftwareSerial BT = SoftwareSerial(12, 13); // RX,TX
 #endif
 
 #define PI_UNO
@@ -28,43 +30,43 @@ Light* LightCtr::blue = &Blue;
 	SoftwareSerial piSerial = SoftwareSerial(2, 3); // RX,TX
 #endif
 
-#define TME
+//#define TME
 #ifdef TME
-#include <DS3231.h>
-#include "TimeCtr.h"
-DS3231  Clock(SDA, SCL);
-DS3231* TimeCtr::clock = &Clock;
+	#include <DS3231.h>
+	#include "TimeCtr.h"
+	DS3231  Clock(SDA, SCL);
+	DS3231* TimeCtr::clock = &Clock;
 #endif
 
 void setup()
 {
 	// Setup Serial connection
 	Serial.begin(Gbl::BAUD);
-#ifdef MEGA
-	Serial3.begin(Gbl::BAUD);
-#endif
-#ifdef BTUNO
-	BT.begin(Gbl::BAUD); // RX,TX
-#endif
-#ifdef PI_UNO
-	piSerial.begin(Gbl::BAUD); // RX,TX
-	piSerial.println(F("we are programmed to receive"));
-#endif
-#ifdef TME
+	#ifdef MEGA
+		Serial3.begin(Gbl::BAUD);
+		Serial2.begin(Gbl::BAUD);
+	#endif
+
+	#ifdef TME
 	Clock.begin();
-#endif
-#ifdef MEGA
-	Gbl::strPtr = &Serial3;
-	Gbl::strPtr->println(F("we are programmed to receive"));
-#endif
-#ifdef BTUNO
-	Gbl::strPtr = &BT;
-	Gbl::strPtr->println(F("we are programmed to receive"));
-#endif
-#ifdef piSerial
-	Gbl::strPtr = &piSerial;
-	Gbl::strPtr->println(F("we are programmed to receive"));
-#endif
+	#endif
+	#ifdef MEGA
+		Gbl::strPtr = &Serial3;
+		Gbl::strPtr->println(F("we are programmed to receive"));
+		Gbl::strPtr = &Serial;
+		Gbl::strPtr->println(F("we are programmed to receive"));
+	#endif
+	#ifdef BTUNO
+		piSerial.begin(Gbl::BAUD);
+		Gbl::strPtr = &BT;
+		Gbl::strPtr->println(F("we are programmed to receive"));
+	#endif
+	#ifdef PI_UNO
+		piSerial.begin(Gbl::BAUD);
+		Gbl::strPtr = &piSerial;
+		Gbl::strPtr->println(F("we are programmed to receive"));
+	#endif
+
 	LightCtr::setFadeOffQuick(1);
 }
 
@@ -80,24 +82,28 @@ void loop()
 		masterCtr.serialReceive();
 	}
 
-#ifdef MEGA
+	#ifdef MEGA
 	while (Serial3.available()) {
-        Gbl::strPtr = &Serial3;
-        masterCtr.serialReceive();
-    }
-#endif
+		Gbl::strPtr = &Serial3;
+		masterCtr.serialReceive();
+	}
+	while (Serial2.available()) {
+		Gbl::strPtr = &Serial2;
+		masterCtr.serialReceive();
+	}
+	#endif
 
-#ifdef BTUNO
+	#ifdef BTUNO
 	while (BT.available()) {
-        Gbl::strPtr = &BT;
-        masterCtr.serialReceive();
-    }
-#endif
+		Gbl::strPtr = &BT;
+		masterCtr.serialReceive();
+	}
+	#endif
 
-#ifdef PI_UNO
+	#ifdef PI_UNO
 	while (piSerial.available()) {
-        Gbl::strPtr = &piSerial;
-        masterCtr.serialReceive();
-    }
-#endif
+		Gbl::strPtr = &piSerial;
+		masterCtr.serialReceive();
+	}
+	#endif
 }

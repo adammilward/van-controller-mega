@@ -210,16 +210,18 @@ void LightCtr::report() {
 	Gbl::strPtr->println(F("<{"));
 	Gbl::strPtr->println(F(" 'mode': 'lights'"));
 	Gbl::strPtr->print(F(",'r': "));
-    Gbl::strPtr->println(red->base * 100);
+    Gbl::strPtr->println(red->power);
 	Gbl::strPtr->print(F(",'g': "));
-    Gbl::strPtr->println(green->base * 100);
+    Gbl::strPtr->println(green->power);
 	Gbl::strPtr->print(F(",'b': "));
-    Gbl::strPtr->println(blue->base * 100);
+    Gbl::strPtr->println(blue->power);
 
 	Gbl::strPtr->print(F(",'l': "));
     Gbl::strPtr->println(red->lower);
 	Gbl::strPtr->print(F(",'u': "));
-    Gbl::strPtr->println(red->lower / 2.55 + red->range * 100);
+    Gbl::strPtr->println(( red->lower + red->range * 255));
+	Gbl::strPtr->print(F(",'range': "));
+    Gbl::strPtr->println(red->range * 255);
 
 	Gbl::strPtr->print(F(",'lightMode': "));
 	Gbl::strPtr->print(F("["));
@@ -235,9 +237,14 @@ void LightCtr::report() {
     Gbl::strPtr->print(F(",'reportDelay': "));
     Gbl::strPtr->println(reportDelaySec * 1000);
 	Gbl::strPtr->println(F("}>"));
-    
-	Gbl::strPtr->println("<{'a': 1, 'b': {'c': 2}}>");
-	Gbl::strPtr->println("<{'a': 1, 'b': {'c': 2}}>");
+
+	// Serial.println("range");
+	// Serial.println(red->range);
+	// Serial.println(red->range * 255);
+	// Serial.println(red->lower);
+	// Serial.println(red->lower + red->range * 255);
+	
+	
 
 	// Gbl::strPtr->print(F("Red      base: "));
     // Gbl::strPtr->print(red->base * 100);
@@ -372,8 +379,6 @@ void LightCtr::onOffFade(){
 }
 
 void LightCtr::redSet(float inBase) {
-	Gbl::strPtr->println("red inBase");
-	Gbl::strPtr->println(inBase);
     red->set((inBase * 0.0101) - 0.01);
 }
 void LightCtr::greenSet(float inBase) {
@@ -433,9 +438,9 @@ void LightCtr::turnFadingOff() {
 }
 
 void LightCtr::turnSlideOn(){
-#ifdef DEBUG
-	Gbl::strPtr->println(F("LightCtr::turnSlideOn"));
-#endif
+	#ifdef DEBUG
+		Gbl::strPtr->println(F("LightCtr::turnSlideOn"));
+	#endif
 	ctrMode = FADE;
 	if (! slideDelay) slideDelay = 100;
 	fadeDelay = 0;

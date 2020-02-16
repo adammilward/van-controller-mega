@@ -210,11 +210,11 @@ void LightCtr::report() {
 	Gbl::strPtr->println(F("<{"));
 	Gbl::strPtr->println(F(" 'mode': 'lights'"));
 	Gbl::strPtr->print(F(",'r': "));
-    Gbl::strPtr->println(red->power);
+    Gbl::strPtr->println(red->base * 100);
 	Gbl::strPtr->print(F(",'g': "));
-    Gbl::strPtr->println(green->power);
+    Gbl::strPtr->println(green->base * 100);
 	Gbl::strPtr->print(F(",'b': "));
-    Gbl::strPtr->println(blue->power);
+    Gbl::strPtr->println(blue->base * 100);
 
 	Gbl::strPtr->print(F(",'l': "));
     Gbl::strPtr->println(red->lower);

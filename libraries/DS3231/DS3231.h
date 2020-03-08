@@ -19,9 +19,6 @@
   The license applies to all part of the library including the 
   examples and tools supplied with the library.
 */
-
-//wtf?
-
 #ifndef DS3231_h
 #define DS3231_h
 

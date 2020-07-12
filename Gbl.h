@@ -7,8 +7,8 @@
 
 #include "Arduino.h"
 
-#define UNO
-//#define MEGA
+//#define UNO
+#define MEGA
 
 #ifndef CONFIG_H_
 #define CONFIG_H_
@@ -17,7 +17,7 @@ public:
 
 	static Stream *strPtr;
     
-    static const uint32_t BAUD = 57600;
+    static const uint32_t BAUD = 115200;
 
     static const byte DELAY_MIN = 1;
     static const byte DELAY_MAX = 255;

@@ -1,10 +1,12 @@
 
 /*
- * Light.cpp
+ * Utilities/Light.cpp
  *
  *  Created on: 5 Dec 2016
  *      Author: Adam Milward
  */
+
+#include "Light.h"
 #include "Light.h"
 
 //#define MYBUG
@@ -16,14 +18,14 @@ Light::Light(
         byte ID,
 		float inGain,
 		float inLower,
-		float inUpper)
-{
+		float inUpper
+) {
     pin = inPin;            // sets the pin
     pinMode(pin, OUTPUT);
 	id = ID;
     gain = (inGain == 0)? randomize(): inGain;
-	range = inUpper - inLower; // range between 0 and 1
-	lower = inLower * 254 + 1;
+	range =  254.0 / 255.0; // range between 0 and 1
+	lower = 1;
 	base = inUpper;
 	set(0.2);
 }
@@ -84,10 +86,6 @@ void Light::set(float setBase, bool flash) {
 		//Serial.println(setBase);
 		analogWrite(pin, (power));
 	}
-//	 Gbl::strPtr->print(F("base= "));
-//     Gbl::strPtr->println(base);
-//	 Gbl::strPtr->print(F("power= "));
-//     Gbl::strPtr->println(power);
 }
 
 // change power of light automatically
@@ -169,6 +167,7 @@ void Light::calcPow() {
     Serial.print(lower);
     Serial.println("    ");*/
 
+	// half the power of the green and blue lights
 	if (id != 0) {
 	    power = power * 0.5 + 0.5;
 	}
@@ -185,14 +184,8 @@ float Light::randomize() {
     // 0.001 to 0.008
     return random(2, 20)/10000.0;
 }
-// called when resetting fade
-// sets the base to half, calculates the power of lights
-// and writes to pin
-void Light::toHalf() {
-    base = 0.5;
-    calcPow();
-    analogWrite(pin, (power));
-}
+
+
 void Light::flashOff(){
     digitalWrite(pin, LOW);
     delay(20);
@@ -208,75 +201,29 @@ void Light::flashOn(){
     delay(20);
     analogWrite(pin, power);
 }
-void Light::changeLower(char op, float change) {
-    /*Serial.println();
-    Serial.println();
-    Serial.print("lower: ");
-    Serial.println(lower);
-    Serial.print("range: ");
-    Serial.println(range);
-    Serial.println();*/
 
-    float tempLower = (lower - 1) /  254;
-    float tempUpper = range + tempLower;
+void Light::setUpper(float inUpper) {
+	inUpper = (inUpper > 255) ? 255 : inUpper;
+	inUpper = (inUpper < 25) ? 25 : inUpper;
 
-    tempLower = tempLower + (op * change);
-    if (tempLower < 0 ) {
-        tempLower = 0;
-        flashHalf();
-    } else if (tempLower > 0.6) {
-        tempLower = 0.6;
-        flashOn();
-    }
-    if (tempUpper - tempLower < 0.2) {
-        tempUpper = tempLower + 0.2;
-    }
-    range = tempUpper - tempLower; // range between 0 and 1
-    lower = tempLower * 254 + 1;
-    base = 0;
-    flashOff();
+	range = (inUpper - lower) / 255;
+	range =  (range < 0.1) ? 0.1 : range;
 
-/*     Gbl::strPtr->print(F("upper= "));
-     Gbl::strPtr->println(tempUpper);
-     Gbl::strPtr->print(F("lower= "));
-     Gbl::strPtr->println(tempLower);*/
-}
-/**
- * range from 0.2 to 1 increments of 0.2
- */
-void Light::changeUpper(char op, float change) {
-   /* Serial.println();
-    Serial.println();
-    Serial.print("lower: ");
-    Serial.println(lower);
-    Serial.print("range: ");
-    Serial.println(range);
-    Serial.println();*/
-
-    float tempLower = (lower - 1) /  254;
-    float tempUpper = range + tempLower;
-
-    tempUpper = tempUpper + (op * change);
-
-    if (tempUpper > 1 ) {
-        tempUpper = 1;
-        flashOn();
-    } else if (tempUpper < 0.2) {
-        tempUpper = 0.2;
-    }
-    if (tempUpper - tempLower < 0.2) {
-        tempLower = tempUpper - 0.2;
-        flashHalf();
-    }
-    range = tempUpper - tempLower; // range between 0 and 1
-    lower = tempLower * 254 + 1;
-    base = 1;
-    flashOff();
-
-/*     Gbl::strPtr->print(F("upper= "));
-     Gbl::strPtr->println((tempUpper));
-     Gbl::strPtr->print(F("lower= "));
-     Gbl::strPtr->println((tempLower));*/
+	lower = inUpper - range * 255;
+	lower = (lower < 1) ? 1 : lower;
 }
 
+// input 0 to 100, output 0 to 230
+void Light::setLower(float inLower) {
+	
+	float upper = lower + range * 255;
 
+	inLower = (inLower > 0.9 * 255) ? 0.9 * 255 : inLower;
+	inLower = (inLower < 1) ? 1 : inLower;
+
+	range = (upper - inLower) / 255;
+	range =  (range < 0.1) ? 0.1 : range;
+	range =  (inLower + range * 255 > 255) ? (255 - inLower) / 255 : range;
+
+	lower = inLower;
+}

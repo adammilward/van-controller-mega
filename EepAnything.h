@@ -7,7 +7,7 @@
 
 #include <EEPROM.h>
 #include <Arduino.h>  // for type definitions
-#include "Gbl.h"
+
 
 #ifndef EEPADMIN_H_
 #define EEPADMIN_H_

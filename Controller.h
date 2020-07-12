@@ -5,8 +5,8 @@
  *      Author: Adam Milward
  */
 
-#include "TimeCtr.h"
 #include "LightCtr.h"
+#include "TimeCtr.h"
 #include "StatusCtr.h"
 
 #ifndef REMOTERECEIVE_H_
@@ -29,10 +29,6 @@ public:
 
 private:
 
-
-    //StatusCtr statusCtr;
-    //LightCtr lightCtr;
-
     enum IRMode {IR_LIGHTS, IR_MP3};
     IRMode iRMode = IR_LIGHTS;
     enum Mode {LIGHTS, STATUS, CLOCK};
@@ -41,12 +37,18 @@ private:
     unsigned long int storedCode = 0;  // for sending when hold is pressed
 
     static constexpr byte maxLetters = 30;
-    char prevDataAr[maxLetters];
+    char dataArr[maxLetters];
+    byte dataArrLength = 0;
+
     static constexpr byte maxWords = 7;
     char *wordPtrs[maxWords];
     byte wordCount = 0;
 
-    void serialRead();
+    bool serialGetCommand();
+    void addChar(char);
+    void addSpace();
+    void terminateCommand();
+
     bool checkForRepeat(char *);
     bool processSerial(byte);
     bool checkForMode();

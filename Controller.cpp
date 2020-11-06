@@ -9,8 +9,8 @@
 #include "Controller.h"
 
 #define LTS
-//#define STAT
-//#define TME
+#define STAT
+#define TME
 
 #ifdef TME
 	#include "TimeCtr.h"

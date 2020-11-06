@@ -16,7 +16,7 @@ Light* LightCtr::blue = &Blue;
 
 //#define DEBUG
 
-//#define MEGA
+#define MEGA
 //#define BTUNO
 
 #ifdef BTUNO
@@ -24,13 +24,13 @@ Light* LightCtr::blue = &Blue;
 SoftwareSerial BT = SoftwareSerial(12, 13); // RX,TX
 #endif
 
-#define PI_UNO
+//#define PI_UNO
 #ifdef PI_UNO
 	#include "SoftwareSerial.h"
 	SoftwareSerial piSerial = SoftwareSerial(2, 3); // RX,TX
 #endif
 
-//#define TME
+#define TME
 #ifdef TME
 	#include <DS3231.h>
 	#include "TimeCtr.h"

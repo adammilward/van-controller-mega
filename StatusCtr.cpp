@@ -138,24 +138,21 @@ void StatusCtr::timer(unsigned long millis) {
 }
 
 void StatusCtr::report() {
-    Gbl::strPtr->println(F(""));
-    Gbl::strPtr->print(F("Solar Panels: "));
+    Gbl::strPtr->println(F("<{"));
+    Gbl::strPtr->println(F(" 'mode': 'status'"));
+    Gbl::strPtr->print(F(",'solarPanels': "));
     Gbl::strPtr->print(voltMeter.getVoltage(0));
-    Gbl::strPtr->println(F("V"));
-    Gbl::strPtr->print(F("Consumer Unit: "));
+    Gbl::strPtr->print(F(",'consumerUnit': "));
     Gbl::strPtr->print(voltMeter.getVoltage(1));
-    Gbl::strPtr->println(F("V"));
-    Gbl::strPtr->print(F("Leisue Battery: "));
+    Gbl::strPtr->print(F(",'leisueBattery': "));
     Gbl::strPtr->print(voltMeter.getVoltage(2));
-    Gbl::strPtr->println(F("V"));
-    Gbl::strPtr->print(F("Van Battery: "));
+    Gbl::strPtr->print(F(",'vanBattery': "));
     Gbl::strPtr->print(voltMeter.getVoltage(3));
-    Gbl::strPtr->println(F("V"));
-    Gbl::strPtr->print("spare: ");
+    Gbl::strPtr->print(",'spare': ");
     Gbl::strPtr->print(voltMeter.getVoltage(4));
-    Gbl::strPtr->println(F("V"));
-    Gbl::strPtr->print(F("delay= "));
+    Gbl::strPtr->print(F(",'delay': "));
     Gbl::strPtr->println(reportDelaySec);
+    Gbl::strPtr->println(F("}>"));
 	Gbl::freeRam();
 }
 

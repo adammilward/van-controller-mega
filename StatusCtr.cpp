@@ -7,7 +7,7 @@
 
 #include "StatusCtr.h"
 
-#define DEBUG
+//#define DEBUG
 
 StatusCtr::StatusCtr(){
 	VoltMeter voltMeter;
@@ -47,13 +47,15 @@ bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
     	Gbl::strPtr->println(F("calibration"));
     	showCalibration();
     } else {
+	    Gbl::strPtr->println(F("Command not recognised, options are:"));
     	Gbl::strPtr->println(F("Status Controller commands are:"));
     	Gbl::strPtr->println(F("report [nn]"));
     	Gbl::strPtr->println(F("csv [nn]"));
     	Gbl::strPtr->println(F("raw"));
     	Gbl::strPtr->println(F("save"));
     	Gbl::strPtr->println(F("calibration"));
-    	Gbl::strPtr->println(F("set"));
+    	Gbl::strPtr->println(F("Set {pinNumber} {nn.nn}"));
+    	Gbl::strPtr->println(F("remember to 'save' after setting"));
         return false;
     }
     return true;
@@ -138,8 +140,7 @@ void StatusCtr::timer(unsigned long millis) {
 }
 
 void StatusCtr::report() {
-    Gbl::strPtr->println(F("<{"));
-    Gbl::strPtr->println(F(" 'mode': 'status'"));
+    Gbl::strPtr->println(F("<{'type': 'status', 'payload': {"));
     Gbl::strPtr->print(F(",'solarPanels': "));
     Gbl::strPtr->println(voltMeter.getVoltage(0));
     Gbl::strPtr->print(F(",'consumerUnit': "));
@@ -152,7 +153,7 @@ void StatusCtr::report() {
     Gbl::strPtr->println(voltMeter.getVoltage(4));
     Gbl::strPtr->print(F(",'delay': "));
     Gbl::strPtr->println(reportDelaySec);
-    Gbl::strPtr->println(F("}>"));
+    Gbl::strPtr->println(F("}}>"));
 	Gbl::freeRam();
 }
 

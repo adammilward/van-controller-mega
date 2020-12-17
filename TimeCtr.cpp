@@ -78,7 +78,7 @@ bool TimeCtr::actionSerial(char **wordPtrs, byte wordCount) {
 }
 
 bool TimeCtr::help() {
-	Gbl::strPtr->println(F("<{'mode': 'clock', 'err': 'command not recognised'}>"));
+	Gbl::strPtr->println(F("<{'type': 'clock', 'err': 'command not recognised'}>"));
 	Gbl::strPtr->println(F("Time Controller commands are:"));
 	Gbl::strPtr->println(F("report|time|date|temp"));
 	Gbl::strPtr->println(F("set time hh mm ss"));
@@ -262,7 +262,7 @@ bool TimeCtr::actionSet(char **wordPtrs, byte wordCount) {
 	} else if (strcasecmp(wordPtrs[0], "time") == 0) {
 		if (setTime(&wordPtrs[1], wordCount-1)) return true;
 	}
-	Gbl::strPtr->println(F("<{'mode': 'clock', 'err': 'Set Failed'}>"));
+	Gbl::strPtr->println(F("<{'type': 'clock', 'err': 'Set Failed'}>"));
     Gbl::strPtr->println(F("Set Failed, command format is: "));
     Gbl::strPtr->println(F("day n | date dd mm yyyy | time hh mm ss"));
     return false;
@@ -552,6 +552,7 @@ void TimeCtr::utilityValidate(Utility& util) {
 }
 
 void TimeCtr::report() {
+	// todo to convert to json, don't bother with the other report types above
     Gbl::strPtr->println(F("Time Report"));
     outTime();
     outDate();
@@ -576,6 +577,7 @@ void TimeCtr::outTime() {
     Gbl::strPtr->print(F("Time: "));
     Gbl::strPtr->println(clock->getTimeStr());
 }
+
 void TimeCtr::outDate() {
     // Send time
     Gbl::strPtr->print(F("Date: "));
@@ -584,6 +586,7 @@ void TimeCtr::outDate() {
     Gbl::strPtr->print(F(", "));
     Gbl::strPtr->println(clock->getMonthStr());
 }
+
 void TimeCtr::outTemp() {
     // Send time
     Gbl::strPtr->print(F("Temp: "));

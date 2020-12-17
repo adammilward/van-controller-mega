@@ -69,8 +69,7 @@ bool LightCtr::actionSerial(char **wordPtrs, byte wordCount){
 }
 
 void LightCtr::help() {
-	Gbl::strPtr->println(F("<{'mode': 'lights', 'err': 'command not recognised'}>"));
-	Gbl::strPtr->println(F("Command not recognised, options are:"));
+	Gbl::strPtr->println(F("<{'type': 'lights', 'err': 'command not recognised'}>"));
 	Gbl::strPtr->println(F("Command not recognised, options are:"));
     Gbl::strPtr->println(F("- Single Word Commands "));
     int i = oneWordCount;
@@ -207,8 +206,7 @@ void LightCtr::setFadeOffQuick(byte delayMillis) {
 }
 
 void LightCtr::report() {
-	Gbl::strPtr->println(F("<{"));
-	Gbl::strPtr->println(F(" 'mode': 'lights'"));
+	Gbl::strPtr->println(F("<{'type': 'lights', 'payload': {"));
 	Gbl::strPtr->print(F(",'r': "));
     Gbl::strPtr->println(red->base * 100);
 	Gbl::strPtr->print(F(",'g': "));
@@ -236,7 +234,7 @@ void LightCtr::report() {
 	Gbl::strPtr->println(fadeDelay);
     Gbl::strPtr->print(F(",'reportDelay': "));
     Gbl::strPtr->println(reportDelaySec * 1000);
-	Gbl::strPtr->println(F("}>"));
+	Gbl::strPtr->println(F("}}>"));
 
 	// Serial.println("range");
 	// Serial.println(red->range);

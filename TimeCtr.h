@@ -43,7 +43,7 @@ private:
 		bool active = false;
 		bool repeat = false;
 		byte timerMins = 30;
-		uint32_t timeStamp = -1; //set too high to activate
+		uint32_t timeStamp = -1; //set to high to activate
 		byte h = 0;
 		byte m = 0;
 	};
@@ -97,7 +97,6 @@ private:
 	bool setTime(char**, byte);
 	void outTime();
 	void outDate();
-	void outTemp();
 
 	char *getTimeStr(byte, byte, bool = false);
 };

@@ -62,8 +62,6 @@ bool TimeCtr::actionSerial(char **wordPtrs, byte wordCount) {
 		if (!actionSet(&wordPtrs[1], --wordCount)) return help();
     } else if (strcasecmp(wordPtrs[0], "time") == 0) {
 		outTime();
-    } else if (strcasecmp(wordPtrs[0], "temp") == 0) {
-		outTemp();
     } else if (strcasecmp(wordPtrs[0], "date") == 0) {
 		outDate();
     } else if (strcasecmp(wordPtrs[0], "heater") == 0
@@ -80,7 +78,7 @@ bool TimeCtr::actionSerial(char **wordPtrs, byte wordCount) {
 bool TimeCtr::help() {
 	Gbl::strPtr->println(F("<{'type': 'clock', 'err': 'command not recognised'}>"));
 	Gbl::strPtr->println(F("Time Controller commands are:"));
-	Gbl::strPtr->println(F("report|time|date|temp"));
+	Gbl::strPtr->println(F("report|time|date"));
 	Gbl::strPtr->println(F("set time hh mm ss"));
 	Gbl::strPtr->println(F("set date dd mm yyyy"));
 	Gbl::strPtr->println(F("set day (1-7)"));
@@ -363,36 +361,46 @@ void TimeCtr::utilityReport(Utility &util) {
 	int mins = (seconds/60) % 60;
 
 	outTime();
-
+     
+	Gbl::strPtr->println(F("<{'type': 'time', 'payload': {'"));
 	Gbl::strPtr->print(
-			(util.ID == HEATER) ? F("HEATER") : (
-				(util.ID == WATER) ? F("WATER") : (
-					(util.ID == LED) ? F("LEDs") : F("dunno")
+			(util.ID == HEATER) ? F("heater") : (
+				(util.ID == WATER) ? F("water") : (
+					(util.ID == LED) ? F("leds") : F("dunno")
 	)));
+	Gbl::strPtr->print(F("': {'on': "));
 	if (ON == util.status) {
-		Gbl::strPtr->print(F("  :  ON for: "));
+		Gbl::strPtr->println(F("true,"));
+		Gbl::strPtr->print(F("'forMins: '"));
 		Gbl::strPtr->print(
 			(util.timer.timeStamp - unixTime + 59) / 60 // round up to nearly nearest 1 min
 		);
-		Gbl::strPtr->println(F(" min"));
 	} else {
-		Gbl::strPtr->println(F("  :  OFF"));
+		Gbl::strPtr->println(F("false"));
 	}
-	Gbl::strPtr->print(F("Alarm: "));
+	Gbl::strPtr->println(F(", 'alarm': {"));
+	Gbl::strPtr->println(F("'on': "));
 	if (util.alarm.active) {
-		Gbl::strPtr->print(F("will come on in: "));
+		Gbl::strPtr->println(F("true,"));
+		Gbl::strPtr->print(F("'inMins': '"));
 		Gbl::strPtr->print(getTimeStr(hours, mins, true));
-		Gbl::strPtr->println(F("m "));
+		Gbl::strPtr->println(F("'"));
 	} else {
-		Gbl::strPtr->println(F("off"));
+		Gbl::strPtr->println(F("false"));
 	}
-	Gbl::strPtr->print(F("set for "));
-	Gbl::strPtr->println(getTimeStr(util.alarm.h, util.alarm.m));
+	Gbl::strPtr->print(F(",'time': '"));
+	Gbl::strPtr->print(getTimeStr(util.alarm.h, util.alarm.m));
+	Gbl::strPtr->println(F("'"));
+	Gbl::strPtr->print(F(",'ts': '"));
+	Gbl::strPtr->print(util.alarm.timeStamp);
+	Gbl::strPtr->println(F("'"));
+	Gbl::strPtr->print(F(",'repeat': '"));
+	Gbl::strPtr->print(util.alarm.repeat);
+	Gbl::strPtr->println(F("'"));
 	Gbl::strPtr->println((util.alarm.repeat) ? F("repeat") : F("once"));
-	Gbl::strPtr->print(F("alarm on timer: "));
-	Gbl::strPtr->println(util.alarm.timerMins);
-
-	Gbl::strPtr->println();
+	Gbl::strPtr->print(F(",'timerMins': '"));
+	Gbl::strPtr->print(util.alarm.timerMins);
+	Gbl::strPtr->println(F("'}}}}>"));
 
 /*	Gbl::strPtr->println();
 	Gbl::strPtr->print(F("unixTime                   "));
@@ -553,14 +561,16 @@ void TimeCtr::utilityValidate(Utility& util) {
 
 void TimeCtr::report() {
 	// todo to convert to json, don't bother with the other report types above
-    Gbl::strPtr->println(F("Time Report"));
+    Gbl::strPtr->println(F("<{'type': 'time', 'payload': {'time': {'ts': '"));
+	Gbl::strPtr->println(clock->getTimeStr());
+    Gbl::strPtr->print(F("','temp': '"));
+	Gbl::strPtr->print(clock->getTemp());
+	Gbl::strPtr->print(F("','reportDelay': '"));
+	Gbl::strPtr->print(reportDelaySec);
+	Gbl::strPtr->println(F("'}}}>"));
+
     outTime();
     outDate();
-    outTemp();
-    if(reportDelaySec) {
-    	Gbl::strPtr->print(F("report timer: "));
-    	Gbl::strPtr->println(reportDelaySec);
-    }
 
 #ifdef DEBUG
 	Gbl::strPtr->print(F("alarmsDelaySec: "));
@@ -585,13 +595,6 @@ void TimeCtr::outDate() {
     Gbl::strPtr->print(clock->getDOWStr());
     Gbl::strPtr->print(F(", "));
     Gbl::strPtr->println(clock->getMonthStr());
-}
-
-void TimeCtr::outTemp() {
-    // Send time
-    Gbl::strPtr->print(F("Temp: "));
-   	Gbl::strPtr->print(clock->getTemp());
-   	Gbl::strPtr->println(F(" C"));
 }
 
 char *TimeCtr::getTimeStr(byte h, byte m, bool longFormat)

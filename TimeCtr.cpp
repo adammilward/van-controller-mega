@@ -379,26 +379,19 @@ void TimeCtr::utilityReport(Utility &util) {
 		Gbl::strPtr->println(F("false"));
 	}
 	Gbl::strPtr->println(F(", 'alarm': {"));
-	Gbl::strPtr->println(F("'on': "));
-	if (util.alarm.active) {
-		Gbl::strPtr->println(F("true,"));
-		Gbl::strPtr->print(F("'inMins': '"));
-		Gbl::strPtr->print(getTimeStr(hours, mins, true));
-		Gbl::strPtr->println(F("'"));
-	} else {
-		Gbl::strPtr->println(F("false"));
-	}
-	Gbl::strPtr->print(F(",'time': '"));
+	Gbl::strPtr->print(F("'on': "));
+	Gbl::strPtr->println(util.alarm.active ? F("true") : F("false"));
+	Gbl::strPtr->print(F(",'inMins': '"));
+	Gbl::strPtr->print(getTimeStr(hours, mins, true));
+
+	Gbl::strPtr->print(F("','time': '"));
 	Gbl::strPtr->print(getTimeStr(util.alarm.h, util.alarm.m));
-	Gbl::strPtr->println(F("'"));
-	Gbl::strPtr->print(F(",'ts': '"));
+	Gbl::strPtr->print(F("','ts': '"));
 	Gbl::strPtr->print(util.alarm.timeStamp);
-	Gbl::strPtr->println(F("'"));
-	Gbl::strPtr->print(F(",'repeat': '"));
+	Gbl::strPtr->print(F("','repeat': '"));
 	Gbl::strPtr->print(util.alarm.repeat);
-	Gbl::strPtr->println(F("'"));
 	Gbl::strPtr->println((util.alarm.repeat) ? F("repeat") : F("once"));
-	Gbl::strPtr->print(F(",'timerMins': '"));
+	Gbl::strPtr->print(F("','timerMins': '"));
 	Gbl::strPtr->print(util.alarm.timerMins);
 	Gbl::strPtr->println(F("'}}}}>"));
 
@@ -561,13 +554,13 @@ void TimeCtr::utilityValidate(Utility& util) {
 
 void TimeCtr::report() {
 	// todo to convert to json, don't bother with the other report types above
-    Gbl::strPtr->println(F("<{'type': 'time', 'payload': {'time': {'ts': '"));
+    Gbl::strPtr->println(F("<{'type': 'time', 'payload': {'timeTs': '"));
 	Gbl::strPtr->println(clock->getTimeStr());
     Gbl::strPtr->print(F("','temp': '"));
 	Gbl::strPtr->print(clock->getTemp());
 	Gbl::strPtr->print(F("','reportDelay': '"));
 	Gbl::strPtr->print(reportDelaySec);
-	Gbl::strPtr->println(F("'}}}>"));
+	Gbl::strPtr->println(F("'}}>"));
 
     outTime();
     outDate();

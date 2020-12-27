@@ -14,6 +14,7 @@
 class StatusCtr {
 public:
     StatusCtr();
+    StatusCtr(TimeCtr*);
 
     enum ReportType {REPORT, CSV};
     ReportType reportType = REPORT;

@@ -20,6 +20,7 @@ public:
 
 	bool actionSerial(char **, byte);
 	void actionTimer(unsigned long);
+	uint32_t getTimestamp();
 
 	static DS3231* clock;
 

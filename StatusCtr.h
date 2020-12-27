@@ -27,6 +27,7 @@ public:
     void timer(unsigned long);
 private:
 
+    TimeCtr* timeCtrPtr;
     VoltMeter voltMeter;
     void setReportDelay(byte);
     bool set(char **wordPtrs, byte wordCount);

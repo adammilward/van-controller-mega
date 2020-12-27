@@ -9,8 +9,9 @@
 
 //#define DEBUG
 
-StatusCtr::StatusCtr(){
+StatusCtr::StatusCtr(TimeCtr* inTimeCtrPtr){
 	VoltMeter voltMeter;
+    timeCtrPtr = inTimeCtrPtr
 }
 
 bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
@@ -141,7 +142,9 @@ void StatusCtr::timer(unsigned long millis) {
 
 void StatusCtr::report() {
     Gbl::strPtr->println(F("<{'type': 'status', 'payload': {"));
-    Gbl::strPtr->print(F(" 'solarPanels': "));
+    Gbl::strPtr->print(F("'timestamp': "));
+    Gbl::strPtr->print(timeCtrPtr->getTimestamp());
+    Gbl::strPtr->print(F(",'solarPanels': "));
     Gbl::strPtr->println(voltMeter.getVoltage(0));
     Gbl::strPtr->print(F(",'consumerUnit': "));
     Gbl::strPtr->println(voltMeter.getVoltage(1));

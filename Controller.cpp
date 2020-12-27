@@ -32,7 +32,8 @@ Controller::Controller() {
 		TimeCtr timeCtr;
 	#endif
 	#ifdef STAT
-		StatusCtr statusCtr;
+		//todo if we may want to pass a null pointer, if timeCtr is not initialised
+		StatusCtr statusCtr(&timeCtr);
 	#endif
 }
 

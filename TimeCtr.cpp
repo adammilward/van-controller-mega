@@ -555,7 +555,7 @@ void TimeCtr::utilityValidate(Utility& util) {
 void TimeCtr::report() {
 	// todo to convert to json, don't bother with the other report types above
     Gbl::strPtr->println(F("<{'type': 'time', 'payload': {'timeTs': '"));
-	Gbl::strPtr->println(clock->getTimeStr());
+	Gbl::strPtr->println(getTimestamp());
     Gbl::strPtr->print(F("','temp': '"));
 	Gbl::strPtr->print(clock->getTemp());
 	Gbl::strPtr->print(F("','reportDelay': '"));
@@ -573,6 +573,10 @@ void TimeCtr::report() {
 	Gbl::strPtr->println((unsigned long)alarmsDelaySec * 1000);
 	Gbl::strPtr->println((unsigned long)(millis() - prevAlarmsMillis));
 #endif
+}
+
+uint32_t TimeCtr::getTimestamp() {
+	return clock->getUnixTime(clock->getTime());
 }
 
 void TimeCtr::outTime() {

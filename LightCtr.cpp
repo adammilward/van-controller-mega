@@ -207,7 +207,7 @@ void LightCtr::setFadeOffQuick(byte delayMillis) {
 
 void LightCtr::report() {
 	Gbl::strPtr->println(F("<{'type': 'lights', 'payload': {"));
-	Gbl::strPtr->print(F(",'r': "));
+	Gbl::strPtr->print(F(" 'r': "));
     Gbl::strPtr->println(red->base * 100);
 	Gbl::strPtr->print(F(",'g': "));
     Gbl::strPtr->println(green->base * 100);

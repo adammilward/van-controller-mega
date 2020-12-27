@@ -6,6 +6,7 @@
  */
 
 #include "VoltMeter.h"
+#include "TimeCtr.h"
 
 #ifndef STATUSCTR_H_
 #define STATUSCTR_H_

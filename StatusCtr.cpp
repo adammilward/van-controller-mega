@@ -6,12 +6,13 @@
  */
 
 #include "StatusCtr.h"
+#include "TimeCtr.h"
 
 //#define DEBUG
 
 StatusCtr::StatusCtr(TimeCtr* inTimeCtrPtr){
 	VoltMeter voltMeter;
-    timeCtrPtr = inTimeCtrPtr
+    timeCtrPtr = inTimeCtrPtr;
 }
 
 bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {

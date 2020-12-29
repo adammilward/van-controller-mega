@@ -381,7 +381,7 @@ void TimeCtr::utilityReport(Utility &util) {
 	Gbl::strPtr->println(F(", 'alarm': {"));
 	Gbl::strPtr->print(F("'on': "));
 	Gbl::strPtr->println(util.alarm.active ? F("true") : F("false"));
-	Gbl::strPtr->print(F(",'inMins': '"));
+	Gbl::strPtr->print(F(",'inHM': '"));
 	Gbl::strPtr->print(getTimeStr(hours, mins, true));
 
 	Gbl::strPtr->print(F("','time': '"));

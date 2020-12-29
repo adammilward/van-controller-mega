@@ -66,7 +66,7 @@ void Controller::serialReceive() {
 			if (!processSerial(0)) {
 				// if no mode and process failed
 				Gbl::strPtr->println(F("I'm sorry Dave, I'm afraid I can't do that."));
-				Gbl::strPtr->println(F("Modes are: 'lights', 'status', 'com' or 'clock'"));
+				Gbl::strPtr->println(F("Modes are: 'lights', 'status' or 'time'"));
 				outputMode();
 			}
 		}
@@ -152,9 +152,8 @@ bool Controller::checkForMode()  {
 	{
         mode = STATUS;
     } else if (
-		strcasecmp(wordPtrs[0], "c") == 0
-		|| strcasecmp(wordPtrs[0], "t") == 0
-		|| strcasecmp(wordPtrs[0], "clock") == 0
+		strcasecmp(wordPtrs[0], "t") == 0
+		|| strcasecmp(wordPtrs[0], "time") == 0
 	)
 	{
         mode = CLOCK;

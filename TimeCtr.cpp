@@ -362,7 +362,7 @@ void TimeCtr::utilityReport(Utility &util) {
 
 	outTime();
      
-	Gbl::strPtr->println(F("<{'type': 'time', 'payload': {'"));
+	Gbl::strPtr->print(F("<{'type': 'time', 'payload': {'"));
 	Gbl::strPtr->println(
 			(util.ID == HEATER) ? F("heater") : (
 				(util.ID == WATER) ? F("water") : (
@@ -386,13 +386,13 @@ void TimeCtr::utilityReport(Utility &util) {
 
 	Gbl::strPtr->print(F("','time': '"));
 	Gbl::strPtr->println(getTimeStr(util.alarm.h, util.alarm.m));
-	Gbl::strPtr->print(F("','ts': '"));
+	Gbl::strPtr->print(F("','ts': "));
 	Gbl::strPtr->println(util.alarm.timeStamp);
-	Gbl::strPtr->print(F("','repeat': '"));
+	Gbl::strPtr->print(F(",'repeat': '"));
 	Gbl::strPtr->println((util.alarm.repeat) ? F("repeat") : F("once"));
-	Gbl::strPtr->print(F("','timerMins': '"));
+	Gbl::strPtr->print(F("','timerMins': "));
 	Gbl::strPtr->print(util.alarm.timerMins);
-	Gbl::strPtr->println(F("'}}}}>"));
+	Gbl::strPtr->println(F("}}}}>"));
 
 /*	Gbl::strPtr->println();
 	Gbl::strPtr->print(F("unixTime                   "));

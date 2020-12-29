@@ -372,23 +372,23 @@ void TimeCtr::utilityReport(Utility &util) {
 	if (ON == util.status) {
 		Gbl::strPtr->println(F("true,"));
 		Gbl::strPtr->print(F("'forMins: '"));
-		Gbl::strPtr->print(
+		Gbl::strPtr->println(
 			(util.timer.timeStamp - unixTime + 59) / 60 // round up to nearly nearest 1 min
 		);
 	} else {
 		Gbl::strPtr->println(F("false"));
 	}
-	Gbl::strPtr->print(F(", 'alarm': {"));
+	Gbl::strPtr->println(F(", 'alarm': {"));
 	Gbl::strPtr->print(F("'on': "));
-	Gbl::strPtr->print(util.alarm.active ? F("true") : F("false"));
+	Gbl::strPtr->println(util.alarm.active ? F("true") : F("false"));
 	Gbl::strPtr->print(F(",'inHM': '"));
 	Gbl::strPtr->print(getTimeStr(hours, mins, true));
 
 	Gbl::strPtr->print(F("','time': '"));
 	Gbl::strPtr->print(getTimeStr(util.alarm.h, util.alarm.m));
-	Gbl::strPtr->print(F("','ts': '"));
-	Gbl::strPtr->print(util.alarm.timeStamp);
-	Gbl::strPtr->print(F("','repeat': '"));
+	Gbl::strPtr->print(F("','ts': "));
+	Gbl::strPtr->println(util.alarm.timeStamp);
+	Gbl::strPtr->print(F(",'repeat': '"));
 	Gbl::strPtr->print((util.alarm.repeat) ? F("repeat") : F("once"));
 	Gbl::strPtr->print(F("','timerMins': '"));
 	Gbl::strPtr->print(util.alarm.timerMins);

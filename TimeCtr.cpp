@@ -363,7 +363,7 @@ void TimeCtr::utilityReport(Utility &util) {
 	outTime();
      
 	Gbl::strPtr->print(F("<{'type': 'time', 'payload': {'"));
-	Gbl::strPtr->println(
+	Gbl::strPtr->print(
 			(util.ID == HEATER) ? F("heater") : (
 				(util.ID == WATER) ? F("water") : (
 					(util.ID == LED) ? F("leds") : F("dunno")
@@ -378,21 +378,21 @@ void TimeCtr::utilityReport(Utility &util) {
 	} else {
 		Gbl::strPtr->println(F("false"));
 	}
-	Gbl::strPtr->println(F(", 'alarm': {"));
+	Gbl::strPtr->print(F(", 'alarm': {"));
 	Gbl::strPtr->print(F("'on': "));
-	Gbl::strPtr->println(util.alarm.active ? F("true") : F("false"));
+	Gbl::strPtr->print(util.alarm.active ? F("true") : F("false"));
 	Gbl::strPtr->print(F(",'inHM': '"));
 	Gbl::strPtr->print(getTimeStr(hours, mins, true));
 
 	Gbl::strPtr->print(F("','time': '"));
-	Gbl::strPtr->println(getTimeStr(util.alarm.h, util.alarm.m));
-	Gbl::strPtr->print(F("','ts': "));
-	Gbl::strPtr->println(util.alarm.timeStamp);
-	Gbl::strPtr->print(F(",'repeat': '"));
-	Gbl::strPtr->println((util.alarm.repeat) ? F("repeat") : F("once"));
-	Gbl::strPtr->print(F("','timerMins': "));
+	Gbl::strPtr->print(getTimeStr(util.alarm.h, util.alarm.m));
+	Gbl::strPtr->print(F("','ts': '"));
+	Gbl::strPtr->print(util.alarm.timeStamp);
+	Gbl::strPtr->print(F("','repeat': '"));
+	Gbl::strPtr->print((util.alarm.repeat) ? F("repeat") : F("once"));
+	Gbl::strPtr->print(F("','timerMins': '"));
 	Gbl::strPtr->print(util.alarm.timerMins);
-	Gbl::strPtr->println(F("}}}}>"));
+	Gbl::strPtr->print(F("'}}}}>"));
 
 /*	Gbl::strPtr->println();
 	Gbl::strPtr->print(F("unixTime                   "));

@@ -553,9 +553,9 @@ void TimeCtr::utilityValidate(Utility& util) {
 
 void TimeCtr::report() {
 	// todo to convert to json, don't bother with the other report types above
-    Gbl::strPtr->println(F("<{'type': 'time', 'payload': {'timeTs': '"));
+    Gbl::strPtr->print(F("<{'type': 'time', 'payload': {'timeTs': "));
 	Gbl::strPtr->println(getTimestamp());
-    Gbl::strPtr->print(F("','temp': '"));
+    Gbl::strPtr->print(F(",'temp': '"));
 	Gbl::strPtr->print(clock->getTemp());
 	Gbl::strPtr->print(F("','reportDelay': '"));
 	Gbl::strPtr->print(reportDelaySec);

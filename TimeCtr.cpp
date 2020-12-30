@@ -372,7 +372,7 @@ void TimeCtr::utilityReport(Utility &util) {
 	Gbl::strPtr->print(F("': {'on': "));
 	if (ON == util.status) {
 		Gbl::strPtr->println(F("true,"));
-		Gbl::strPtr->print(F("'forMins: "));
+		Gbl::strPtr->print(F("'forMins': "));
 		Gbl::strPtr->println(
 			(util.timer.timeStamp - unixTime + 59) / 60 // round up to nearly nearest 1 min
 		);

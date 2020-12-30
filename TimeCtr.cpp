@@ -372,7 +372,7 @@ void TimeCtr::utilityReport(Utility &util) {
 	Gbl::strPtr->print(F("': {'on': "));
 	if (ON == util.status) {
 		Gbl::strPtr->println(F("true,"));
-		Gbl::strPtr->print(F("'forMins: '"));
+		Gbl::strPtr->print(F("'forMins: "));
 		Gbl::strPtr->println(
 			(util.timer.timeStamp - unixTime + 59) / 60 // round up to nearly nearest 1 min
 		);
@@ -391,9 +391,9 @@ void TimeCtr::utilityReport(Utility &util) {
 	Gbl::strPtr->println(util.alarm.timeStamp);
 	Gbl::strPtr->print(F(",'repeat': '"));
 	Gbl::strPtr->print((util.alarm.repeat) ? F("repeat") : F("once"));
-	Gbl::strPtr->print(F("','timerMins': '"));
+	Gbl::strPtr->print(F("','timerMins': "));
 	Gbl::strPtr->print(util.alarm.timerMins);
-	Gbl::strPtr->print(F("'}}}}>"));
+	Gbl::strPtr->print(F("}}}}>"));
 
 /*	Gbl::strPtr->println();
 	Gbl::strPtr->print(F("unixTime                   "));

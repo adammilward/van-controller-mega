@@ -66,10 +66,11 @@ bool TimeCtr::actionSerial(char **wordPtrs, byte wordCount) {
 		outDate();
     } else if (strcasecmp(wordPtrs[0], "heater") == 0
     		|| strcasecmp(wordPtrs[0], "water") == 0
-    		|| strcasecmp(wordPtrs[0], "led") == 0)
+    		|| strcasecmp(wordPtrs[0], "led") == 0
+			|| strcasecmp(wordPtrs[0], "leds") == 0)
     {
     	if (! setUtility(&wordPtrs[0], wordCount)) return help();
-    } else {
+	} else {
     	return help();
     }
 	return true;
@@ -555,11 +556,11 @@ void TimeCtr::report() {
 	// todo to convert to json, don't bother with the other report types above
     Gbl::strPtr->print(F("<{'type': 'time', 'payload': {'timeTs': "));
 	Gbl::strPtr->println(getTimestamp());
-    Gbl::strPtr->print(F(",'temp': '"));
-	Gbl::strPtr->print(clock->getTemp());
-	Gbl::strPtr->print(F("','reportDelay': '"));
+    Gbl::strPtr->print(F(",'temp': "));
+	Gbl::strPtr->println(clock->getTemp());
+	Gbl::strPtr->print(F(",'reportDelay': "));
 	Gbl::strPtr->print(reportDelaySec);
-	Gbl::strPtr->println(F("'}}>"));
+	Gbl::strPtr->println(F("}}>"));
 
     outTime();
     outDate();

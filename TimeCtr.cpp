@@ -579,6 +579,10 @@ uint32_t TimeCtr::getTimestamp() {
 	return clock->getUnixTime(clock->getTime());
 }
 
+uint32_t TimeCtr::getTemp() {
+	return clock->getTemp();
+}
+
 void TimeCtr::outTime() {
     // Send time
     Gbl::strPtr->print(F("Time: "));

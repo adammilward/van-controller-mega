@@ -21,6 +21,7 @@ public:
 	bool actionSerial(char **, byte);
 	void actionTimer(unsigned long);
 	uint32_t getTimestamp();
+	uint32_t getTemp();
 
 	static DS3231* clock;
 

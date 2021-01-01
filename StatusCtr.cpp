@@ -147,6 +147,8 @@ void StatusCtr::report() {
     Gbl::strPtr->println(F("<{'type': 'status', 'payload': {"));
     Gbl::strPtr->print(F(" 'timestamp': "));
     Gbl::strPtr->println(timeCtrPtr->getTimestamp());
+    Gbl::strPtr->print(F(" 'temp': "));
+    Gbl::strPtr->println(timeCtrPtr->getTemp());
     Gbl::strPtr->print(F(",'a0': "));
     Gbl::strPtr->println(voltMeter.getVoltage(0));
     Gbl::strPtr->print(F(",'a1': "));

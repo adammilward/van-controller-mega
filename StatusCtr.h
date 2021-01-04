@@ -7,33 +7,37 @@
 
 #include "VoltMeter.h"
 #include "TimeCtr.h"
+#include "Storage.h"
 
 #ifndef STATUSCTR_H_
 #define STATUSCTR_H_
 
 class StatusCtr {
-public:
-    StatusCtr();
-    StatusCtr(TimeCtr*);
+    public:
+        StatusCtr();
+        StatusCtr(TimeCtr*);
 
-    enum ReportType {REPORT, CSV};
-    ReportType reportType = REPORT;
+        enum ReportType {REPORT, CSV};
+        ReportType reportType = REPORT;
 
-    byte reportDelaySec = 0;
-    unsigned long waitMillisReport = 0;
+        uint8_t reportDelaySec = 0;
+        uint32_t reportWaitMillis = 0;
+        uint32_t storeWaitMillis = 0;
+        uint8_t storeDelaySec = 60;
 
+        bool actionSerial(char **, byte);
+        void report();
+        void csv();
+        void timer(unsigned long);
 
-    bool actionSerial(char **, byte);
-    void report();
-    void csv();
-    void timer(unsigned long);
-private:
+    private:
 
-    TimeCtr* timeCtrPtr;
-    VoltMeter voltMeter;
-    void setReportDelay(byte);
-    bool set(char **wordPtrs, byte wordCount);
-    void setAll(float);
-    void showCalibration();
+        TimeCtr* timeCtrPtr;
+        VoltMeter voltMeter;
+        Storage store;
+        void setReportDelay(byte);
+        bool set(char **wordPtrs, byte wordCount);
+        void setAll(float);
+        void showCalibration();
 };
 #endif /* STATUSCTR_H_ */

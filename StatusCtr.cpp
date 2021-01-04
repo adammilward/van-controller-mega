@@ -13,8 +13,30 @@
 StatusCtr::StatusCtr() {}
 
 StatusCtr::StatusCtr(TimeCtr* inTimeCtrPtr){
-	VoltMeter voltMeter;
-  timeCtrPtr = inTimeCtrPtr;
+    VoltMeter voltMeter;
+    timeCtrPtr = inTimeCtrPtr;
+    store = Storage();
+}
+
+void StatusCtr::timer(unsigned long millis) {
+    uint32_t elapsed = millis - storeWaitMillis;
+    uint32_t delay = storeDelaySec * 1000;
+
+    if (storeDelaySec && elapsed >= delay) {
+        store.makeRecord();
+        storeWaitMillis = millis;
+    }
+    
+    elapsed = millis - reportWaitMillis;
+    delay = reportDelaySec * 1000;
+    if (reportDelaySec && elapsed >= delay) {
+        if (REPORT == reportType) {
+            report();
+        } else {
+            csv();
+        }
+        reportWaitMillis = millis;
+    }
 }
 
 bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
@@ -39,6 +61,8 @@ bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
         } else {
         	csv();
         }
+    } else if (strcasecmp(wordPtrs[0], "records") == 0) {
+        store.output();
     } else if (strcasecmp(wordPtrs[0], "raw") == 0) {
     	Gbl::strPtr->println(F("raw"));
     	voltMeter.toggleConfigMode();
@@ -55,6 +79,7 @@ bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
     	Gbl::strPtr->println(F("Status Controller commands are:"));
     	Gbl::strPtr->println(F("report [nn]"));
     	Gbl::strPtr->println(F("csv [nn]"));
+    	Gbl::strPtr->println(F("records"));
     	Gbl::strPtr->println(F("raw"));
     	Gbl::strPtr->println(F("save"));
     	Gbl::strPtr->println(F("calibration"));
@@ -78,15 +103,15 @@ void StatusCtr::showCalibration() {
 }
 
 bool StatusCtr::set(char **wordPtrs, byte wordCount) {
-#ifdef DEBUG
-		Gbl::strPtr->print(F("StatusCtr::set"));
-#endif
+    #ifdef DEBUG
+        Gbl::strPtr->print(F("StatusCtr::set"));
+    #endif
 	for (byte i = 0; i < wordCount; i++) {
-#ifdef DEBUG
-		Gbl::strPtr->print(F("word number:"));
-		Gbl::strPtr->println(i);
-		Gbl::strPtr->println(wordPtrs[i]);
-#endif
+        #ifdef DEBUG
+            Gbl::strPtr->print(F("word number:"));
+            Gbl::strPtr->println(i);
+            Gbl::strPtr->println(wordPtrs[i]);
+        #endif
 		if (Gbl::isNum(wordPtrs[i])) {
 			//
 		} else {
@@ -128,20 +153,6 @@ void StatusCtr::setReportDelay(byte delaySeconds) {
     reportDelaySec = delaySeconds;
 }
 
-void StatusCtr::timer(unsigned long millis) {
-    if (reportDelaySec
-			&&
-			(unsigned long)(millis - waitMillisReport)
-				>= (unsigned long)reportDelaySec * 1000)
-        {
-            if (REPORT == reportType) {
-                report();
-            } else {
-                csv();
-            }
-            waitMillisReport = millis;
-        }
-}
 
 void StatusCtr::report() {
     Gbl::strPtr->println(F("<{'type': 'status', 'payload': {"));

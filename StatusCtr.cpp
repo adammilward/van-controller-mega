@@ -20,7 +20,7 @@ StatusCtr::StatusCtr(TimeCtr* inTimeCtrPtr){
 
 void StatusCtr::timer(unsigned long millis) {
     uint32_t elapsed = millis - storeWaitMillis;
-    uint32_t delay = storeDelaySec * 1000;
+    uint32_t delay = (uint32_t)storeDelaySec * 1000;
 
     if (storeDelaySec && 
             (unsigned long)(millis - storeWaitMillis)
@@ -43,7 +43,7 @@ void StatusCtr::timer(unsigned long millis) {
     }
     
     elapsed = millis - reportWaitMillis;
-    delay = reportDelaySec * 1000;
+    delay = (uint32_t)reportDelaySec * 1000;
     if (reportDelaySec && elapsed >= delay) {
         if (REPORT == reportType) {
             report();

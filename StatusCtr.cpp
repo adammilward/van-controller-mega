@@ -22,7 +22,13 @@ void StatusCtr::timer(unsigned long millis) {
     uint32_t elapsed = millis - storeWaitMillis;
     uint32_t delay = storeDelaySec * 1000;
 
-    if (storeDelaySec && elapsed >= delay) {
+    if (storeDelaySec && 
+            (unsigned long)(millis - storeWaitMillis)
+			>= (unsigned long)storeDelaySec * 1000
+    ) {
+        Gbl::strPtr->println(elapsed);
+        Gbl::strPtr->println(delay);
+        Gbl::strPtr->println(elapsed >= delay);
         store.makeRecord(
             timeCtrPtr->getTimestamp(),
             timeCtrPtr->getTemp(),
@@ -54,11 +60,6 @@ bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
 	}
 	if (strcasecmp(wordPtrs[0], "report") == 0) {
         if (wordCount == 2 && Gbl::isNum(wordPtrs[1])) {
-                    Gbl::strPtr->println(F("d"));
-    Gbl::strPtr->println(storeDelaySec);
-            Gbl::strPtr->println(F("a"));
-            Gbl::strPtr->println(wordPtrs[1]);
-            Gbl::strPtr->println(atoi(wordPtrs[1]));
 			setReportDelay(atoi(wordPtrs[1]));
 			reportType = REPORT;
 		} else {
@@ -160,11 +161,7 @@ void StatusCtr::setReportDelay(byte delaySeconds) {
 #ifdef DEBUG
 		Gbl::strPtr->print(F("StatusCtr::setReportDelay"));
 #endif
-            Gbl::strPtr->println(F("b"));
-            Gbl::strPtr->println(delaySeconds);
     reportDelaySec = delaySeconds;
-    Gbl::strPtr->println(F("c"));
-    Gbl::strPtr->println(reportDelaySec);
 }
 
 

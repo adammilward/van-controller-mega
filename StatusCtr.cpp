@@ -28,6 +28,7 @@ void StatusCtr::timer(unsigned long millis) {
             timeCtrPtr->getTemp(),
             voltMeter.getVoltage(0)
         );
+        store.output();
         storeWaitMillis = millis;
     }
     

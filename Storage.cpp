@@ -17,7 +17,7 @@ void Storage::makeRecord(
 
     // thirty minute denominator
     if (! (storeCount % 30)) {
-        addRecord(oneMin, timestamp, temp, vA0); 
+        addRecord(thirtyMins, timestamp, temp, vA0); 
     }
 
     // 5 minute denominator
@@ -26,7 +26,7 @@ void Storage::makeRecord(
     }
 
     // every minute
-    addRecord(thirtyMins, timestamp, temp, vA0);
+    addRecord(oneMin, timestamp, temp, vA0);
 
     // increment counter
     storeCount ++;

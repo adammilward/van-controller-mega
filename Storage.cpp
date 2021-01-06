@@ -71,6 +71,6 @@ void Storage::outputRecords(analogRecord &recordRef) {
         Gbl::strPtr->print(F(","));    
         Gbl::strPtr->print(recordRef.records[i]);
     }
-    Gbl::strPtr->print(F("]}"));
+    Gbl::strPtr->println(F("]}"));
 }
 

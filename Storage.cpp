@@ -76,7 +76,7 @@ void Storage::outputRecords(analogRecord &recordRef) {
         Gbl::strPtr->print(F(","));    
         Gbl::strPtr->print(recordRef.temp[i]);
     }
-    Gbl::strPtr->println(F("],"));
+    Gbl::strPtr->println(F("]"));
 
     
     Gbl::strPtr->print(F(",'vA0': ["));

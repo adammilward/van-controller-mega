@@ -54,6 +54,11 @@ bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
 	}
 	if (strcasecmp(wordPtrs[0], "report") == 0) {
         if (wordCount == 2 && Gbl::isNum(wordPtrs[1])) {
+                    Gbl::strPtr->println(F("d"));
+    Gbl::strPtr->println(storeDelaySec);
+            Gbl::strPtr->println(F("a"));
+            Gbl::strPtr->println(wordPtrs[1]);
+            Gbl::strPtr->println(atoi(wordPtrs[1]));
 			setReportDelay(atoi(wordPtrs[1]));
 			reportType = REPORT;
 		} else {
@@ -155,7 +160,11 @@ void StatusCtr::setReportDelay(byte delaySeconds) {
 #ifdef DEBUG
 		Gbl::strPtr->print(F("StatusCtr::setReportDelay"));
 #endif
+            Gbl::strPtr->println(F("b"));
+            Gbl::strPtr->println(delaySeconds);
     reportDelaySec = delaySeconds;
+    Gbl::strPtr->println(F("c"));
+    Gbl::strPtr->println(reportDelaySec);
 }
 
 
@@ -179,6 +188,8 @@ void StatusCtr::report() {
     Gbl::strPtr->println(reportDelaySec);
     Gbl::strPtr->println(F("}}>"));
 	Gbl::freeRam();
+
+    
 }
 
 void StatusCtr::csv() {

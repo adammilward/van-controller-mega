@@ -29,6 +29,10 @@ void StatusCtr::timer(unsigned long millis) {
         Gbl::strPtr->println(elapsed);
         Gbl::strPtr->println(delay);
         Gbl::strPtr->println(elapsed >= delay);
+        Gbl::strPtr->println((unsigned long)(millis - storeWaitMillis));
+        Gbl::strPtr->println((unsigned long)storeDelaySec * 1000);
+        Gbl::strPtr->println((unsigned long)(millis - storeWaitMillis)
+			>= (unsigned long)storeDelaySec * 1000);
         store.makeRecord(
             timeCtrPtr->getTimestamp(),
             timeCtrPtr->getTemp(),

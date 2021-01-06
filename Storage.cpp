@@ -4,28 +4,29 @@
 Storage::Storage() {
     uint8_t i = 60;
     while (i --) {
-        oneMin.records[i] = 0;
-        fiveMins.records[i] = 0;
-        thirtyMins.records[i] = 0;
+        oneMin.vA0[i] = fiveMins.vA0[i] = thirtyMins.vA0[i] =
+        oneMin.temp[i] = fiveMins.temp[i] = thirtyMins.temp[i] = 0;
     }
 }
 
-void Storage::makeRecord() {
-    uint16_t vRaw = analogRead(A0);
-    uint32_t timestamp = sampleTimestamp;
+void Storage::makeRecord(
+    uint32_t timestamp,
+    float temp,
+    float vA0
+) {
 
     // thirty minute denominator
     if (! (storeCount % 30)) {
-        addRecord(vRaw, sampleTimestamp, thirtyMins); 
+        addRecord(oneMin, timestamp, temp, vA0); 
     }
 
     // 5 minute denominator
     if (! (storeCount % 5)) {
-        addRecord(vRaw, sampleTimestamp, fiveMins);
+        addRecord(fiveMins, timestamp, temp, vA0);
     }
 
     // every minute
-    addRecord(vRaw, sampleTimestamp, oneMin);
+    addRecord(thirtyMins, timestamp, temp, vA0);
 
     // increment counter
     storeCount ++;
@@ -36,19 +37,22 @@ void Storage::makeRecord() {
 }
 
 void Storage::addRecord(
-    uint16_t vRaw,
+    analogRecord &recordRef,
     uint32_t timestamp,
-    analogRecord &recordRef
+    float temp,
+    float a0
 ) {
     recordRef.timestamp = timestamp;
 
     uint8_t i = numRecords;
     // copy elements from 58 - 0 into 59 - 1
     while (--i) {
-        recordRef.records[i] = recordRef.records[i - 1];
+        recordRef.temp[i] = recordRef.temp[i - 1];
+        recordRef.vA0[i] = recordRef.vA0[i - 1];
     }
     // record the voltage
-    recordRef.records[0] = vRaw;
+    recordRef.temp[0] = temp;
+    recordRef.vA0[0] = a0;
 }
 
 void Storage::output() {
@@ -65,11 +69,21 @@ void Storage::output() {
 void Storage::outputRecords(analogRecord &recordRef) {
     Gbl::strPtr->print(F("{'timestamp': "));
     Gbl::strPtr->println(recordRef.timestamp);
-    Gbl::strPtr->print(F(",'records': ["));
-    Gbl::strPtr->print(recordRef.records[0]);
+    
+    Gbl::strPtr->print(F(",'temp': ["));
+    Gbl::strPtr->print(recordRef.temp[0]);
     for(uint8_t i = 1; i < (numRecords); i++) {
         Gbl::strPtr->print(F(","));    
-        Gbl::strPtr->print(recordRef.records[i]);
+        Gbl::strPtr->print(recordRef.temp[i]);
+    }
+    Gbl::strPtr->println(F("],"));
+
+    
+    Gbl::strPtr->print(F(",'vA0': ["));
+    Gbl::strPtr->print(recordRef.vA0[0]);
+    for(uint8_t i = 1; i < (numRecords); i++) {
+        Gbl::strPtr->print(F(","));    
+        Gbl::strPtr->print(recordRef.vA0[i]);
     }
     Gbl::strPtr->println(F("]}"));
 }

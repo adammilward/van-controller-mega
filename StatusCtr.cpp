@@ -23,7 +23,11 @@ void StatusCtr::timer(unsigned long millis) {
     uint32_t delay = storeDelaySec * 1000;
 
     if (storeDelaySec && elapsed >= delay) {
-        store.makeRecord();
+        store.makeRecord(
+            timeCtrPtr->getTimestamp(),
+            timeCtrPtr->getTemp(),
+            voltMeter.getVoltage(0)
+        );
         storeWaitMillis = millis;
     }
     

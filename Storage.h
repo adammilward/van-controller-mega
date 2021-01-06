@@ -9,24 +9,25 @@ class Storage {
         static const uint8_t numRecords = 60;
 
         struct analogRecord {
-            uint16_t records[numRecords];
             uint32_t timestamp;
+            float temp[numRecords];
+            float vA0[numRecords];
         } oneMin, fiveMins, thirtyMins;
 
-        uint32_t sampleTimestamp = 1609691391;
         uint32_t storeCount = 0;
         
         void addRecord(
-            uint16_t vRaw,
+            analogRecord &recordRef,
             uint32_t timestamp,
-            analogRecord &recordRef
+            float temp,
+            float vA0
         );
         void outputRecords(analogRecord &recordRef);
 
     public:
         Storage();
         void output();
-        void makeRecord();
+        void makeRecord(uint32_t, float, float);
 };
 
 #endif

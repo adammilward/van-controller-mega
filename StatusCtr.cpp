@@ -22,10 +22,7 @@ void StatusCtr::timer(unsigned long millis) {
     uint32_t elapsed = millis - storeWaitMillis;
     uint32_t delay = (uint32_t)storeDelaySec * 1000;
 
-    if (storeDelaySec && 
-            (unsigned long)(millis - storeWaitMillis)
-			>= (unsigned long)storeDelaySec * 1000
-    ) {
+    if (storeDelaySec && elapsed >= delay) {
         Gbl::strPtr->println(elapsed);
         Gbl::strPtr->println(delay);
         Gbl::strPtr->println(elapsed >= delay);

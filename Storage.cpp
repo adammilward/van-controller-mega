@@ -56,7 +56,7 @@ void Storage::addRecord(
 }
 
 void Storage::output() {
-    Gbl::strPtr->println(F("<{'type': 'status', 'payload': {'records': {"));
+    Gbl::strPtr->println(F("<{'type': 'records', 'payload': {'records': {"));
     Gbl::strPtr->print(F("'oneMin': "));
     outputRecords(oneMin);
     Gbl::strPtr->print(F(",'fiveMins': "));

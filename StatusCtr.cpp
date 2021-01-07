@@ -23,19 +23,14 @@ void StatusCtr::timer(unsigned long millis) {
     uint32_t delay = (uint32_t)storeDelaySec * 1000;
 
     if (storeDelaySec && elapsed >= delay) {
-        Gbl::strPtr->println(elapsed);
-        Gbl::strPtr->println(delay);
-        Gbl::strPtr->println(elapsed >= delay);
-        Gbl::strPtr->println((unsigned long)(millis - storeWaitMillis));
-        Gbl::strPtr->println((unsigned long)storeDelaySec * 1000);
-        Gbl::strPtr->println((unsigned long)(millis - storeWaitMillis)
-			>= (unsigned long)storeDelaySec * 1000);
         store.makeRecord(
             timeCtrPtr->getTimestamp(),
             timeCtrPtr->getTemp(),
             voltMeter.getVoltage(0)
         );
-        store.output();
+        if (reportDelaySec) {
+            store.output();
+        }
         storeWaitMillis = millis;
     }
     

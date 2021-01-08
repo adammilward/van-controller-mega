@@ -139,6 +139,7 @@ bool StatusCtr::set(char **wordPtrs, byte wordCount) {
         } else if (Gbl::isNum(wordPtrs[0])  &&  Gbl::isNum(wordPtrs[1])) {
             voltMeter.setPin(atoi(wordPtrs[0]), atof(wordPtrs[1]));
             Gbl::strPtr->println(F("value set"));
+            Gbl::strPtr->println(F("remember to 'save' when done"));
             return true;
         }
     }

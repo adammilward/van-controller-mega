@@ -31,9 +31,9 @@ class Storage {
 
         float* averageRecords(
             analogRecord &,
-            float *,
             uint32_t,
-            uint8_t
+            uint8_t,
+            float*
         );
 
         void outputRecords(analogRecord &recordRef);

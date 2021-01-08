@@ -18,18 +18,16 @@ void Storage::makeRecord(
     float values[],
     uint8_t valCount
 ) {
-
-
     // every minute
     addRecord(oneMin, timestamp, values, valCount);
     // 5 minute denominator
     if (! (storeCount % 5)) {
-        values = averageRecords(oneMin, values, timestamp, 5);
+        values = averageRecords(oneMin, timestamp, 5, values);
         addRecord(fiveMins, timestamp, values, valCount);
     }
     // thirty minute denominator
     if (! (storeCount % 30)) {
-        values = averageRecords(oneMin, values, timestamp, 30);
+        values = averageRecords(oneMin, timestamp, 30, values);
         addRecord(thirtyMins, timestamp, values, valCount); 
     }
 
@@ -64,22 +62,23 @@ void Storage::addRecord(
 
 float* Storage::averageRecords(
     analogRecord &source,
-    float *values,
     uint32_t timestamp,
-    uint8_t denominator
+    uint8_t denominator,
+    float* values
 ) {
     // build the array of averages
     uint8_t c = numSignals;
     while(c--) values[c] = 0;
 
-    uint8_t d = denominator;    
-    while (d--) {
-        uint8_t i = numSignals;
-        while (i--) {
+    uint8_t i = numSignals;
+    while (i--) {
+        uint8_t d = denominator;    
+        while (d--) {
             values[i] += source.records[i][d];
         }
         values[i] = values[i] / denominator;
     }
+    
     return values;
 }
 

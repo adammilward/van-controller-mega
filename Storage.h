@@ -29,7 +29,7 @@ class Storage {
             uint8_t 
         );
 
-        void averageRecords(
+        float* averageRecords(
             analogRecord &,
             float *,
             uint32_t,

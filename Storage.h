@@ -4,14 +4,20 @@
 #define STORAGE_H_
 
 class Storage {
+    public:
+        Storage();
+        void output();
+        void makeRecord(uint32_t, float*, uint8_t);
+    
+        static const uint8_t numSignals = 3;
+    
     private:
-
         static const uint8_t numRecords = 60;
 
         struct analogRecord {
             uint32_t timestamp;
-            float temp[numRecords];
-            float vA0[numRecords];
+            float records[numSignals][numRecords];
+            uint8_t nAverage;
         } oneMin, fiveMins, thirtyMins;
 
         uint32_t storeCount = 0;
@@ -19,15 +25,18 @@ class Storage {
         void addRecord(
             analogRecord &recordRef,
             uint32_t timestamp,
-            float temp,
-            float vA0
+            float *,
+            uint8_t 
         );
-        void outputRecords(analogRecord &recordRef);
 
-    public:
-        Storage();
-        void output();
-        void makeRecord(uint32_t, float, float);
+        void averageRecords(
+            analogRecord &,
+            float *,
+            uint32_t,
+            uint8_t
+        );
+
+        void outputRecords(analogRecord &recordRef);
 };
 
 #endif

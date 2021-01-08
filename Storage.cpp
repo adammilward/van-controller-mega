@@ -2,31 +2,34 @@
 #include "Gbl.h"
 
 Storage::Storage() {
-    uint8_t i = 60;
-    while (i --) {
-        oneMin.vA0[i] = fiveMins.vA0[i] = thirtyMins.vA0[i] =
-        oneMin.temp[i] = fiveMins.temp[i] = thirtyMins.temp[i] = 0;
+    uint8_t s = numSignals;
+    while(s--){
+        uint8_t i = numRecords;
+        while (i--) {
+            oneMin.records[s][i] =
+            fiveMins.records[s][i] =
+            thirtyMins.records[s][i] = 0;
+        }
     }
 }
 
 void Storage::makeRecord(
     uint32_t timestamp,
-    float temp,
-    float vA0
+    float values[],
+    uint8_t valCount
 ) {
 
-    // thirty minute denominator
-    if (! (storeCount % 30)) {
-        addRecord(thirtyMins, timestamp, temp, vA0); 
-    }
-
-    // 5 minute denominator
-    if (! (storeCount % 5)) {
-        addRecord(fiveMins, timestamp, temp, vA0);
-    }
 
     // every minute
-    addRecord(oneMin, timestamp, temp, vA0);
+    addRecord(oneMin, timestamp, values, valCount);
+    // 5 minute denominator
+    if (! (storeCount % 5)) {
+        addRecord(fiveMins, timestamp, values, valCount);
+    }
+    // thirty minute denominator
+    if (! (storeCount % 30)) {
+        addRecord(thirtyMins, timestamp, values, valCount); 
+    }
 
     // increment counter
     storeCount ++;
@@ -39,20 +42,40 @@ void Storage::makeRecord(
 void Storage::addRecord(
     analogRecord &recordRef,
     uint32_t timestamp,
-    float temp,
-    float a0
+    float values[],
+    uint8_t valCount
 ) {
     recordRef.timestamp = timestamp;
 
-    uint8_t i = numRecords;
-    // copy elements from 58 - 0 into 59 - 1
-    while (--i) {
-        recordRef.temp[i] = recordRef.temp[i - 1];
-        recordRef.vA0[i] = recordRef.vA0[i - 1];
+    while(valCount--){
+        uint8_t i = numRecords;
+        // copy elements from 58 - 0 into 59 - 1
+        while (--i) {
+            recordRef.records[valCount][i]
+            =
+            recordRef.records[valCount][i - 1];
+        }
+        // place the most recent value into last place
+        recordRef.records[valCount][0] = values[valCount];
     }
-    // record the voltage
-    recordRef.temp[0] = temp;
-    recordRef.vA0[0] = a0;
+}
+
+void Storage::averageRecords(
+    analogRecord &source,
+    float *values,
+    uint32_t timestamp,
+    uint8_t denominator
+) {
+    // build the array of averages
+    uint8_t c = numSignals;
+    while(c--) values[c] = 0;
+        
+    while (denominator--) {
+        uint8_t i = numSignals;
+        while (i--) {
+            values[i] += source.records[i][denominator];
+        }
+    }
 }
 
 void Storage::output() {
@@ -70,21 +93,21 @@ void Storage::outputRecords(analogRecord &recordRef) {
     Gbl::strPtr->print(F("{'timestamp': "));
     Gbl::strPtr->println(recordRef.timestamp);
     
-    Gbl::strPtr->print(F(",'temp': ["));
-    Gbl::strPtr->print(recordRef.temp[0]);
-    for(uint8_t i = 1; i < (numRecords); i++) {
-        Gbl::strPtr->print(F(","));    
-        Gbl::strPtr->print(recordRef.temp[i]);
-    }
-    Gbl::strPtr->println(F("]"));
+    Gbl::strPtr->print(F(",'values': ["));
 
+    for(uint8_t s = 0; s < (numSignals); s++) {
+        
+        if (s) Gbl::strPtr->print(F(","));
+        Gbl::strPtr->println(F("["));
+
+        for(uint8_t i = 0; i < (numRecords); i++) {
+            if (i) Gbl::strPtr->print(F(","));   
+            Gbl::strPtr->print(recordRef.records[s][i]);
+        }
+
+        Gbl::strPtr->println(F("]"));
+    }   
     
-    Gbl::strPtr->print(F(",'vA0': ["));
-    Gbl::strPtr->print(recordRef.vA0[0]);
-    for(uint8_t i = 1; i < (numRecords); i++) {
-        Gbl::strPtr->print(F(","));    
-        Gbl::strPtr->print(recordRef.vA0[i]);
-    }
     Gbl::strPtr->println(F("]}"));
 }
 

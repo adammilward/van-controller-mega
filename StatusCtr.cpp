@@ -21,12 +21,18 @@ StatusCtr::StatusCtr(TimeCtr* inTimeCtrPtr){
 void StatusCtr::timer(unsigned long millis) {
     uint32_t elapsed = millis - storeWaitMillis;
     uint32_t delay = (uint32_t)storeDelaySec * 1000;
+    float values[store.numSignals];
+
+    values[0] = voltMeter.getVoltage(0);
+    values[1] = voltMeter.getVoltage(1);
+    values[2] = timeCtrPtr->getTemp();
+
 
     if (storeDelaySec && elapsed >= delay) {
         store.makeRecord(
             timeCtrPtr->getTimestamp(),
-            timeCtrPtr->getTemp(),
-            voltMeter.getVoltage(0)
+            values,
+            store.numSignals
         );
         if (reportDelaySec) {
             store.output();

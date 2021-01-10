@@ -109,7 +109,6 @@ void Storage::outputRecords(analogRecord &recordRef) {
         for(uint8_t i = 0; i < (numRecords); i++) {
             if (i) Gbl::strPtr->print(F(","));   
             Gbl::sprintf(recordRef.records[s][i]);
-            Gbl::strPtr->print(recordRef.records[s][i]);
         }
 
         Gbl::strPtr->println(F("]"));

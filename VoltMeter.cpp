@@ -27,7 +27,7 @@ float VoltMeter::getVoltage(int pinNumber) {
             readPin(pinNumber)*convFactor[pinNumber];
 }
 
-uint16_t VoltMeter::readPin(byte pinNo) {
+float VoltMeter::readPin(byte pinNo) {
 	byte i = 2;
 	while (i--) {
 		delay(20);

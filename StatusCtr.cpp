@@ -108,10 +108,8 @@ void StatusCtr::showCalibration() {
 #ifdef DEBUG
 		Gbl::strPtr->print(F("StatusCtr::showCalibration"));
 #endif
-    char buff[14];
     for (int pin = 0; pin < Gbl::noAnalogPins; pin++) {
-        dtostrf(voltMeter.getCalibration(pin), 4, 12, buff);
-        Gbl::strPtr->println(buff);
+        Gbl::sprintf(voltMeter.getCalibration(pin), true, 15);
     }
 }
 
@@ -175,17 +173,17 @@ void StatusCtr::report() {
     Gbl::strPtr->print(F(",'temp': "));
     Gbl::strPtr->println(timeCtrPtr->getTemp());
     Gbl::strPtr->print(F(",'a0': "));
-    Gbl::strPtr->println(voltMeter.getVoltage(0));
+    Gbl::sprintf(voltMeter.getVoltage(0));
     Gbl::strPtr->print(F(",'a1': "));
-    Gbl::strPtr->println(voltMeter.getVoltage(1));
+    Gbl::sprintf(voltMeter.getVoltage(1));
     Gbl::strPtr->print(F(",'a2': "));
-    Gbl::strPtr->println(voltMeter.getVoltage(2));
+    Gbl::sprintf(voltMeter.getVoltage(2));
     Gbl::strPtr->print(F(",'a3': "));
-    Gbl::strPtr->println(voltMeter.getVoltage(3));
+    Gbl::sprintf(voltMeter.getVoltage(3));
     Gbl::strPtr->print(",'a4': ");
-    Gbl::strPtr->println(voltMeter.getVoltage(4));
+    Gbl::sprintf(voltMeter.getVoltage(4));
     Gbl::strPtr->print(F(",'delay': "));
-    Gbl::strPtr->println(reportDelaySec);
+    Gbl::sprintf(reportDelaySec);
     Gbl::strPtr->println(F("}}>"));
 	Gbl::freeRam();
 
@@ -194,13 +192,13 @@ void StatusCtr::report() {
 
 void StatusCtr::csv() {
     Gbl::strPtr->print(F(", "));
-    Gbl::strPtr->print(voltMeter.getVoltage(0));
+    Gbl::sprintf(voltMeter.getVoltage(0));
     Gbl::strPtr->print(F(", "));
-    Gbl::strPtr->print(voltMeter.getVoltage(1));
+    Gbl::sprintf(voltMeter.getVoltage(1));
     Gbl::strPtr->print(F(", "));
-    Gbl::strPtr->print(voltMeter.getVoltage(2));
+    Gbl::sprintf(voltMeter.getVoltage(2));
     Gbl::strPtr->print(F(", "));
-    Gbl::strPtr->print(voltMeter.getVoltage(3));
+    Gbl::sprintf(voltMeter.getVoltage(3));
     Gbl::strPtr->print(F(", "));
-    Gbl::strPtr->println(voltMeter.getVoltage(4));
+    Gbl::sprintf(voltMeter.getVoltage(4));
 }

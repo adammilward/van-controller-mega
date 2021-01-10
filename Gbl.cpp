@@ -9,6 +9,16 @@ void Gbl::freeRam ()
   strPtr->println(freeRam);
 }
 
+void Gbl::sprintf(float vIn, bool newLine, int decimalPlaces) {
+    char vOut[20];
+    dtostrf(vIn, 1, decimalPlaces, vOut);
+    if (newLine) { 
+        strPtr->print(vOut);
+    } else {
+        strPtr->print(vOut);
+    }
+}
+
 bool Gbl::isNum(char *word) {
 	boolean isNum=true;
     const char *p;

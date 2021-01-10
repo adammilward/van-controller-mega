@@ -54,6 +54,7 @@ public:
     static constexpr float A4_FACTOR = 0.01460;*/
 
     static void freeRam();
+    static void sprintf(float, bool = false, int = 3);
     static bool isNum(char *word);
 };
 #endif /* CONFIG_H_ */

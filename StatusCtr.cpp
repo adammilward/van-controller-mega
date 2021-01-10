@@ -105,9 +105,6 @@ bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
 }
 
 void StatusCtr::showCalibration() {
-#ifdef DEBUG
-		Gbl::strPtr->print(F("StatusCtr::showCalibration"));
-#endif
     for (int pin = 0; pin < Gbl::noAnalogPins; pin++) {
         Gbl::sprintf(voltMeter.getCalibration(pin), true, 15);
     }

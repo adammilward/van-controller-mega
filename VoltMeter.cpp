@@ -39,7 +39,7 @@ float VoltMeter::readPin(byte pinNo) {
 		delay(20);
 		analogValue += analogRead(pinNo);
 	}
-	return analogValue /= 5;
+	return (float)analogValue / 5;
 }
 
 void VoltMeter::setPin(int pin, float newValue) {

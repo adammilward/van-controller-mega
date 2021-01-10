@@ -36,6 +36,7 @@ class StatusCtr {
         VoltMeter voltMeter;
         Storage store;
         void setReportDelay(byte);
+        void doStorage();
         bool set(char **wordPtrs, byte wordCount);
         void setAll(float);
         void showCalibration();

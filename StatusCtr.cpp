@@ -21,22 +21,11 @@ StatusCtr::StatusCtr(TimeCtr* inTimeCtrPtr){
 void StatusCtr::timer(unsigned long millis) {
     uint32_t elapsed = millis - storeWaitMillis;
     uint32_t delay = (uint32_t)storeDelaySec * 1000;
-    float values[store.numSignals];
-
-    values[0] = voltMeter.getVoltage(0);
-    values[1] = voltMeter.getVoltage(1);
-    values[2] = timeCtrPtr->getTemp();
-
 
     if (storeDelaySec && elapsed >= delay) {
-        store.makeRecord(
-            timeCtrPtr->getTimestamp(),
-            values,
-            store.numSignals
-        );
-        if (reportDelaySec) {
-            store.output();
-        }
+        doStorage();
+        // do output with the status reoprt, if we have it
+        if (reportDelaySec) store.output();
         storeWaitMillis = millis;
     }
     
@@ -50,6 +39,19 @@ void StatusCtr::timer(unsigned long millis) {
         }
         reportWaitMillis = millis;
     }
+}
+
+void StatusCtr::doStorage() {
+    float values[store.numSignals];
+    values[0] = voltMeter.getVoltage(0);
+    values[1] = voltMeter.getVoltage(1);
+    values[2] = timeCtrPtr->getTemp();
+
+    store.makeRecord(
+        timeCtrPtr->getTimestamp(),
+        values,
+        store.numSignals
+    );      
 }
 
 bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {

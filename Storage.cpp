@@ -29,21 +29,21 @@ void Storage::makeRecord(
     // thirty minute denominator
     if (! (storeCount % 30)) {
         if (storeCount)
-            // Serial.print("values before averageing [");
-            // Serial.print(values[0]);
-            // Serial.print(", ");
-            // Serial.print(values[1]);
-            // Serial.print(", ");
-            // Serial.print(values[2]);
-            // Serial.println("]");
+            Serial.print("values before averageing [");
+            Serial.print(values[0]);
+            Serial.print(", ");
+            Serial.print(values[1]);
+            Serial.print(", ");
+            Serial.print(values[2]);
+            Serial.println("]");
             values = averageRecords(oneMin, timestamp, 30, values);
-            // Serial.print("values after averageing [");
-            // Serial.print(values[0]);
-            // Serial.print(", ");
-            // Serial.print(values[1]);
-            // Serial.print(", ");
-            // Serial.print(values[2]);
-            // Serial.println("]");
+            Serial.print("values after averageing [");
+            Serial.print(values[0]);
+            Serial.print(", ");
+            Serial.print(values[1]);
+            Serial.print(", ");
+            Serial.print(values[2]);
+            Serial.println("]");
         addRecord(thirtyMins, timestamp, values, valCount); 
     }
 
@@ -89,18 +89,18 @@ float* Storage::averageRecords(
     uint8_t i = numSignals;
     //Serial.println("averaging");
     while (i--) {
-        // Serial.print("i = ");
-        // Serial.println(i);
+        Serial.print("i = ");
+        Serial.println(i);
         uint8_t d = denominator;    
         while (d--) {
-            // Serial.print("d = ");
-            // Serial.println(d);
+            Serial.print("d = ");
+            Serial.println(d);
             values[i] += source.records[i][d];
-            // Serial.println(values[i]);
+            Serial.println(values[i]);
         }
         values[i] = values[i] / denominator;
-        // Serial.print("value[i] = ");
-        // Serial.println(values[i]);
+        Serial.print("value[i] = ");
+        Serial.println(values[i]);
     }
     
     return values;

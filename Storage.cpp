@@ -95,6 +95,8 @@ float* Storage::averageRecords(
         while (d--) {
             Serial.print("d = ");
             Serial.println(d);
+            Serial.print("val = ");
+            Serial.println(source.records[i][d]);
             values[i] += source.records[i][d];
             Serial.println(values[i]);
         }

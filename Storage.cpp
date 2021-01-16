@@ -51,9 +51,10 @@ void Storage::makeRecord(
 
     // increment counter
     storeCount ++;
-    //reset counter once largest denominator reached
-    if (storeCount == 30) {
-        storeCount = 0;
+    //reset counter once largest denominator reached,
+    // but keep it above 0, so it equates to true
+    if (storeCount == 60) {
+        storeCount = 30;
     }
 }
 

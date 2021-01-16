@@ -5,7 +5,7 @@
  *  Created on: 18 Nov 2017
  *      Author: Adam Milward
  */
-#define DEBUG
+// #define DEBUG
 #include "VoltMeter.h"
 #include "EepAnything.h"
 

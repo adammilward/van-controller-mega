@@ -28,7 +28,7 @@ void Storage::makeRecord(
     }
     // thirty minute denominator
     if (! (storeCount % 30)) {
-        if (storeCount)
+        if (storeCount) {
             Serial.print("values before averageing [");
             Serial.print(values[0]);
             Serial.print(", ");
@@ -44,6 +44,7 @@ void Storage::makeRecord(
             Serial.print(", ");
             Serial.print(values[2]);
             Serial.println("]");
+        }
         addRecord(thirtyMins, timestamp, values, valCount); 
     }
 
@@ -132,7 +133,7 @@ void Storage::outputRecords(analogRecord &recordRef) {
 
         for(uint8_t i = 0; i < (numRecords); i++) {
             if (i) Gbl::strPtr->print(F(","));   
-            Gbl::sprintf(recordRef.records[s][i]);
+            Gbl::sprintf(recordRef.records[s][i], false, 8);
         }
 
         Gbl::strPtr->println(F("]"));

@@ -21,11 +21,11 @@ void Storage::makeRecord(
     // every minute
     addRecord(oneMin, timestamp, values, valCount);
     // 5 minute denominator
-    if (! (storeCount % 5)) {
-        if (storeCount)
-            values = averageRecords(oneMin, timestamp, 5, values);
-        addRecord(fiveMins, timestamp, values, valCount);
-    }
+    // if (! (storeCount % 5)) {
+    //     if (storeCount)
+    //         values = averageRecords(oneMin, timestamp, 5, values);
+    //     addRecord(fiveMins, timestamp, values, valCount);
+    // }
     // thirty minute denominator
     if (! (storeCount % 30)) {
         if (storeCount) {

@@ -20,6 +20,7 @@ void Storage::makeRecord(
 ) {
     // every minute
     addRecord(oneMin, timestamp, values, valCount);
+    Serial.print(storeCount);
     // 5 minute denominator
     // if (! (storeCount % 5)) {
     //     if (storeCount)

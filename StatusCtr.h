@@ -23,7 +23,7 @@ class StatusCtr {
         uint8_t reportDelaySec = 0;
         uint32_t reportWaitMillis = 0;
         uint32_t storeWaitMillis = 0;
-        uint8_t storeDelaySec = 2;
+        uint8_t storeDelaySec = 60;
 
         bool actionSerial(char **, byte);
         void report();

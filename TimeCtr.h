@@ -6,10 +6,10 @@
  */
 
 #include "Arduino.h"
-#include "Utilities/Light.h"
+#include "Light.h"
 #include "DS3231.h"
 #include "LightCtr.h"
-
+#include "EepAnything.h"
 
 #ifndef TIMECTR_H_
 #define TIMECTR_H_
@@ -20,6 +20,8 @@ public:
 
 	bool actionSerial(char **, byte);
 	void actionTimer(unsigned long);
+	uint32_t getTimestamp();
+	uint32_t getTemp();
 
 	static DS3231* clock;
 
@@ -43,7 +45,7 @@ private:
 		bool active = false;
 		bool repeat = false;
 		byte timerMins = 30;
-		uint32_t timeStamp = -1; //set too high to activate
+		uint32_t timeStamp = -1; //set to high to activate
 		byte h = 0;
 		byte m = 0;
 	};
@@ -97,7 +99,6 @@ private:
 	bool setTime(char**, byte);
 	void outTime();
 	void outDate();
-	void outTemp();
 
 	char *getTimeStr(byte, byte, bool = false);
 };

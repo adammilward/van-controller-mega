@@ -6,6 +6,7 @@
  */
 
 #include "VoltMeter.h"
+#include "TimeCtr.h"
 
 #ifndef STATUSCTR_H_
 #define STATUSCTR_H_
@@ -13,6 +14,7 @@
 class StatusCtr {
 public:
     StatusCtr();
+    StatusCtr(TimeCtr*);
 
     enum ReportType {REPORT, CSV};
     ReportType reportType = REPORT;
@@ -27,6 +29,7 @@ public:
     void timer(unsigned long);
 private:
 
+    TimeCtr* timeCtrPtr;
     VoltMeter voltMeter;
     void setReportDelay(byte);
     bool set(char **wordPtrs, byte wordCount);

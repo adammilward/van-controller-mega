@@ -5,7 +5,7 @@
  *  Created on: 18 Nov 2017
  *      Author: Adam Milward
  */
-#define DEBUG
+// #define DEBUG
 #include "VoltMeter.h"
 #include "EepAnything.h"
 
@@ -27,7 +27,7 @@ float VoltMeter::getVoltage(int pinNumber) {
             readPin(pinNumber)*convFactor[pinNumber];
 }
 
-uint16_t VoltMeter::readPin(byte pinNo) {
+float VoltMeter::readPin(byte pinNo) {
 	byte i = 2;
 	while (i--) {
 		delay(20);
@@ -39,7 +39,7 @@ uint16_t VoltMeter::readPin(byte pinNo) {
 		delay(20);
 		analogValue += analogRead(pinNo);
 	}
-	return analogValue /= 5;
+	return (float)analogValue / 5;
 }
 
 void VoltMeter::setPin(int pin, float newValue) {

@@ -29,7 +29,7 @@ public:
 
     void toggleConfigMode();
     float getVoltage(int pinNumber);
-    uint16_t readPin(byte);
+    float readPin(byte);
     void setPin(int, float);
     void saveCalibration();
     void retrieveCalibration();

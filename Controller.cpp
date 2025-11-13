@@ -143,7 +143,8 @@ void Controller::terminateCommand() {
 }
 
 bool Controller::checkForMode()  {
-	if (strcasecmp(wordPtrs[0], "lights") == 0)
+	if (strcasecmp(wordPtrs[0], "l") == 0
+	    ||strcasecmp(wordPtrs[0], "lights") == 0)
 	{
         mode = LIGHTS;
     } else if (

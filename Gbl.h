@@ -41,11 +41,11 @@ public:
 #endif
 
     static constexpr byte noAnalogPins = 5;
-    static constexpr float A0_FACTOR = 0.027305029;
-    static constexpr float A1_FACTOR = 0.015564788;
-    static constexpr float A2_FACTOR = 0.015415081;
-    static constexpr float A3_FACTOR = 0.015522867;
-    static constexpr float A4_FACTOR = 0.01540874;
+    static constexpr float A0_FACTOR = 0.027314814;
+    static constexpr float A1_FACTOR = 0.015472027;
+    static constexpr float A2_FACTOR = 0.06025641;
+    static constexpr float A3_FACTOR = 0.015735447;
+    static constexpr float A4_FACTOR = 0.015265061;
 
 /*    static constexpr float A0_FACTOR = 0.02583;
     static constexpr float A1_FACTOR = 0.01473;
@@ -54,6 +54,7 @@ public:
     static constexpr float A4_FACTOR = 0.01460;*/
 
     static void freeRam();
+    static void sprintf(float, bool = false, int = 3);
     static bool isNum(char *word);
 };
 #endif /* CONFIG_H_ */

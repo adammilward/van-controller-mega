@@ -579,7 +579,7 @@ uint32_t TimeCtr::getTimestamp() {
 	return clock->getUnixTime(clock->getTime());
 }
 
-uint32_t TimeCtr::getTemp() {
+float TimeCtr::getTemp() {
 	return clock->getTemp();
 }
 

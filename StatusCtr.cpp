@@ -13,8 +13,45 @@
 StatusCtr::StatusCtr() {}
 
 StatusCtr::StatusCtr(TimeCtr* inTimeCtrPtr){
-	VoltMeter voltMeter;
-  timeCtrPtr = inTimeCtrPtr;
+    VoltMeter voltMeter;
+    timeCtrPtr = inTimeCtrPtr;
+    store = Storage();
+}
+
+void StatusCtr::timer(unsigned long millis) {
+    uint32_t elapsed = millis - storeWaitMillis;
+    uint32_t delay = (uint32_t)storeDelaySec * 1000;
+
+    if (storeDelaySec && elapsed >= delay) {
+        doStorage();
+        // do output with the status reoprt, if we have it
+        if (reportDelaySec) store.output();
+        storeWaitMillis = millis;
+    }
+    
+    elapsed = millis - reportWaitMillis;
+    delay = (uint32_t)reportDelaySec * 1000;
+    if (reportDelaySec && elapsed >= delay) {
+        if (REPORT == reportType) {
+            report();
+        } else {
+            csv();
+        }
+        reportWaitMillis = millis;
+    }
+}
+
+void StatusCtr::doStorage() {
+    float values[store.numSignals];
+    values[0] = voltMeter.getVoltage(0);
+    values[1] = voltMeter.getVoltage(1);
+    values[2] = timeCtrPtr->getTemp();
+
+    store.makeRecord(
+        timeCtrPtr->getTimestamp(),
+        values,
+        store.numSignals
+    );      
 }
 
 bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
@@ -39,6 +76,8 @@ bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
         } else {
         	csv();
         }
+    } else if (strcasecmp(wordPtrs[0], "records") == 0) {
+        store.output();
     } else if (strcasecmp(wordPtrs[0], "raw") == 0) {
     	Gbl::strPtr->println(F("raw"));
     	voltMeter.toggleConfigMode();
@@ -55,6 +94,7 @@ bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
     	Gbl::strPtr->println(F("Status Controller commands are:"));
     	Gbl::strPtr->println(F("report [nn]"));
     	Gbl::strPtr->println(F("csv [nn]"));
+    	Gbl::strPtr->println(F("records"));
     	Gbl::strPtr->println(F("raw"));
     	Gbl::strPtr->println(F("save"));
     	Gbl::strPtr->println(F("calibration"));
@@ -67,26 +107,21 @@ bool StatusCtr::actionSerial(char **wordPtrs, byte wordCount) {
 }
 
 void StatusCtr::showCalibration() {
-#ifdef DEBUG
-		Gbl::strPtr->print(F("StatusCtr::showCalibration"));
-#endif
-    char buff[14];
     for (int pin = 0; pin < Gbl::noAnalogPins; pin++) {
-        dtostrf(voltMeter.getCalibration(pin), 4, 12, buff);
-        Gbl::strPtr->println(buff);
+        Gbl::sprintf(voltMeter.getCalibration(pin), true, 15);
     }
 }
 
 bool StatusCtr::set(char **wordPtrs, byte wordCount) {
-#ifdef DEBUG
-		Gbl::strPtr->print(F("StatusCtr::set"));
-#endif
+    #ifdef DEBUG
+        Gbl::strPtr->print(F("StatusCtr::set"));
+    #endif
 	for (byte i = 0; i < wordCount; i++) {
-#ifdef DEBUG
-		Gbl::strPtr->print(F("word number:"));
-		Gbl::strPtr->println(i);
-		Gbl::strPtr->println(wordPtrs[i]);
-#endif
+        #ifdef DEBUG
+            Gbl::strPtr->print(F("word number:"));
+            Gbl::strPtr->println(i);
+            Gbl::strPtr->println(wordPtrs[i]);
+        #endif
 		if (Gbl::isNum(wordPtrs[i])) {
 			//
 		} else {
@@ -101,6 +136,7 @@ bool StatusCtr::set(char **wordPtrs, byte wordCount) {
         } else if (Gbl::isNum(wordPtrs[0])  &&  Gbl::isNum(wordPtrs[1])) {
             voltMeter.setPin(atoi(wordPtrs[0]), atof(wordPtrs[1]));
             Gbl::strPtr->println(F("value set"));
+            Gbl::strPtr->println(F("remember to 'save' when done"));
             return true;
         }
     }
@@ -128,20 +164,6 @@ void StatusCtr::setReportDelay(byte delaySeconds) {
     reportDelaySec = delaySeconds;
 }
 
-void StatusCtr::timer(unsigned long millis) {
-    if (reportDelaySec
-			&&
-			(unsigned long)(millis - waitMillisReport)
-				>= (unsigned long)reportDelaySec * 1000)
-        {
-            if (REPORT == reportType) {
-                report();
-            } else {
-                csv();
-            }
-            waitMillisReport = millis;
-        }
-}
 
 void StatusCtr::report() {
     Gbl::strPtr->println(F("<{'type': 'status', 'payload': {"));
@@ -150,30 +172,32 @@ void StatusCtr::report() {
     Gbl::strPtr->print(F(",'temp': "));
     Gbl::strPtr->println(timeCtrPtr->getTemp());
     Gbl::strPtr->print(F(",'a0': "));
-    Gbl::strPtr->println(voltMeter.getVoltage(0));
+    Gbl::sprintf(voltMeter.getVoltage(0));
     Gbl::strPtr->print(F(",'a1': "));
-    Gbl::strPtr->println(voltMeter.getVoltage(1));
+    Gbl::sprintf(voltMeter.getVoltage(1));
     Gbl::strPtr->print(F(",'a2': "));
-    Gbl::strPtr->println(voltMeter.getVoltage(2));
+    Gbl::sprintf(voltMeter.getVoltage(2));
     Gbl::strPtr->print(F(",'a3': "));
-    Gbl::strPtr->println(voltMeter.getVoltage(3));
+    Gbl::sprintf(voltMeter.getVoltage(3));
     Gbl::strPtr->print(",'a4': ");
-    Gbl::strPtr->println(voltMeter.getVoltage(4));
+    Gbl::sprintf(voltMeter.getVoltage(4));
     Gbl::strPtr->print(F(",'delay': "));
-    Gbl::strPtr->println(reportDelaySec);
+    Gbl::sprintf(reportDelaySec);
     Gbl::strPtr->println(F("}}>"));
 	Gbl::freeRam();
+
+    
 }
 
 void StatusCtr::csv() {
     Gbl::strPtr->print(F(", "));
-    Gbl::strPtr->print(voltMeter.getVoltage(0));
+    Gbl::sprintf(voltMeter.getVoltage(0));
     Gbl::strPtr->print(F(", "));
-    Gbl::strPtr->print(voltMeter.getVoltage(1));
+    Gbl::sprintf(voltMeter.getVoltage(1));
     Gbl::strPtr->print(F(", "));
-    Gbl::strPtr->print(voltMeter.getVoltage(2));
+    Gbl::sprintf(voltMeter.getVoltage(2));
     Gbl::strPtr->print(F(", "));
-    Gbl::strPtr->print(voltMeter.getVoltage(3));
+    Gbl::sprintf(voltMeter.getVoltage(3));
     Gbl::strPtr->print(F(", "));
-    Gbl::strPtr->println(voltMeter.getVoltage(4));
+    Gbl::sprintf(voltMeter.getVoltage(4));
 }
